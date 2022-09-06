@@ -1,35 +1,111 @@
 @import "./base.css";
-
-#app {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 2rem;
-
-  font-weight: normal;
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+.container-fluid {
+  @apply w-full px-4
+}
+.link {
+  @apply text-blue-500 hover:text-orange-500 focus:text-orange-600 cursor-pointer;
+}
+/* ----------------------------
+* btn
+---------------------------- */
+.btn-sm {
+  @apply inline-flex items-center justify-center px-2 py-1.5 hover:bg-opacity-5 hover:bg-gray-900 border border-transparent rounded-md text-xs uppercase tracking-widest focus:outline-none focus:ring focus:ring-gray-300 disabled:opacity-25 transition;
+}
+.btn {
+  @apply inline-flex items-center justify-center px-4 py-2 hover:bg-opacity-5 hover:bg-gray-900 border border-transparent rounded-md text-sm uppercase tracking-widest focus:outline-none focus:ring focus:ring-gray-300 disabled:opacity-25 transition;
+}
+.btn-circle {
+  @apply inline-flex items-center justify-center w-6 h-6 border border-transparent rounded-full text-xs uppercase tracking-widest focus:outline-none focus:ring focus:ring-gray-300 disabled:opacity-25 transition;
+}
+.btn-white {
+  @apply bg-white hover:bg-gray-200 active:bg-gray-200 border-gray-300 focus:border-gray-400;
+}
+.btn-dark {
+  @apply text-white bg-gray-800 hover:bg-gray-700 active:bg-gray-900 focus:border-gray-900;
+}
+.btn-primary {
+  @apply text-white bg-blue-600 hover:bg-blue-700 active:bg-blue-700 focus:border-blue-700;
+}
+.btn-success {
+  @apply text-white bg-green-600 hover:bg-green-700 active:bg-green-700 focus:border-green-700;
+}
+.btn-danger {
+  @apply text-white bg-red-600 hover:bg-red-700 active:bg-red-700 focus:border-red-700;
+}
+.btn-secondary {
+  @apply text-white bg-gray-400 hover:bg-gray-500 active:bg-gray-600 focus:border-gray-500;
+}
+/* ----------------------------
+* form-control
+---------------------------- */
+.form-control {
+  @apply border-gray-300 focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 rounded-md shadow-sm block;
+}
+.form-control-sm {
+  @apply form-control py-1 px-2 text-sm;
+}
+.input-group {
+  @apply flex items-center;
+}
+.input-group-append {
+  @apply bg-gray-100 p-2 border border-gray-300 rounded-l-md whitespace-nowrap block ;
+}
+.input-group-prepend {
+  @apply bg-gray-100 p-2 border border-gray-300 rounded-r-md whitespace-nowrap block ;
+}
+.form-control.prepend {
+  @apply rounded-l-none border-l-0;
+}
+.form-control.append {
+  @apply rounded-r-none border-r-0;
+}
+/* ----------------------------
+* form-list
+---------------------------- */
+dl.form-list {
+  @apply sm:flex flex-wrap;
+}
+.form-list dt {
+  @apply sm:w-1/4 text-gray-600 mb-1 pt-2 font-bold text-sm;
+}
+.form-list dd {
+  @apply sm:w-3/4 grow mb-5;
 }
 
-a,
-.green {
-  text-decoration: none;
-  color: hsla(160, 100%, 37%, 1);
-  transition: 0.4s;
+/* ----------------------------
+* table
+---------------------------- */
+.table-responsive {
+  @apply overflow-x-scroll whitespace-nowrap;
+  -webkit-overflow-scrolling: touch;
+}
+.table {
+
+}
+.table thead {
+  @apply border-b-2 border-gray-300
+}
+.table th {
+  @apply py-3 px-5 text-left align-top text-sm border-b border-gray-200 text-gray-500;
+}
+.table th.text-right {
+  text-align: right;
+}
+.table td {
+  @apply py-3 px-5 border-b;
+}
+.table-sm th, .table-sm td {
+  @apply py-2 px-2 text-sm;
+}
+.table-responsive table.table th,
+.table-responsive table.table td {
+  @apply whitespace-nowrap;
+}
+.form-heading {
+  @apply py-2 px-4 mb-3 rounded bg-gray-200;
 }
 
-@media (hover: hover) {
-  a:hover {
-    background-color: hsla(160, 100%, 37%, 0.2);
-  }
-}
 
-@media (min-width: 1024px) {
-  body {
-    display: flex;
-    place-items: center;
-  }
-
-  #app {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    padding: 0 2rem;
-  }
-}
