@@ -1,11 +1,14 @@
 import { ref, computed } from 'vue'
 import { defineStore } from 'pinia'
 
-export const useAuthStore = defineStore('auth', () => {
-  const user = {
-    name: 'Hiroyuki',
-    email: 'heartone.biz@gmail.com'
-  }
+export const useAuthStore = defineStore('auth', {
+  state: () => ({
+    currentUser: null,
+  }),
+  getters: {
+    isLoggedIn: (state) => state.currentUser !== null,
+  },
+  actions: {
 
-  return { user }
+  }
 })

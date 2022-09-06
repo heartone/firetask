@@ -5,7 +5,7 @@ import TopHeader from '@/components/TopHeader.vue'
 
 <template>
   <TopHeader />
-  <main class="container-fluid">
+  <main class="container-fluid py-4">
     <RouterView />
   </main>
 </template>

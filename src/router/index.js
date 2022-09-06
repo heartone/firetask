@@ -1,5 +1,5 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import HomeView from '../views/HomeView.vue'
+import { getAuth } from 'firebase/auth'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -7,12 +7,21 @@ const router = createRouter({
     {
       path: '/',
       name: 'home',
-      component: HomeView
+      component: () => import('@/views/HomeView.vue'),
+      beforeEnter: (to, from, next) => {
+        getAuth().onAuthStateChanged(user => {
+          if (user) {
+            next()
+          } else {
+            next("/login");
+          }
+        });
+      }
     },
     {
       path: '/login',
       name: 'login',
-      component: () => import('@/views/LoginView.vue')
+      component: () => import('@/views/auth/Login.vue')
     }
   ]
 })
