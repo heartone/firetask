@@ -1,6 +1,5 @@
 import { initializeApp } from 'firebase/app'
 import { getFirestore } from 'firebase/firestore'
-console.log(import.meta.env.FB_APIKEY)
 const firebaseConfig = {
   apiKey: "AIzaSyD2gKU0Uyc5syArTEJsNK-OBuC0Iny-cNk",
   authDomain: "taskapp-8101.firebaseapp.com",
