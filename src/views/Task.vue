@@ -4,11 +4,10 @@ import TasksList from '@/components/TasksList.vue'
 
 </script>
 <template>
-  <div class="container-fluid py-3 border-b shadow bg-white">
+
     <NewTask />
-  </div>
-  <div class="container-fluid py-3 ">
+
+  <div class="container-fluid py-3 overflow-x-auto">
     <TasksList />
   </div>
-
 </template>

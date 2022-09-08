@@ -2,7 +2,7 @@
 import { reactive, ref, onMounted } from "vue"
 import { useRoute, useRouter } from 'vue-router'
 import{ db } from '@/FirebaseConfig.js'
-import { doc, setDoc, getDoc, updateDoc } from "firebase/firestore"
+import { doc, getDoc, updateDoc } from "firebase/firestore"
 const route = useRoute()
 const router = useRouter()
 const taskId = route.params.taskId
@@ -35,6 +35,7 @@ const updateTask = async () => {
     <form @submit.prevent="updateTask">
       <div class="mb-3"><input type="text" v-model="editTaskContent" class="form-control" placeholder="タスク内容を入力" autofocus></div>
       <button type="submit" class="btn btn-success">Update</button>
+      <router-link to="/" class="btn btn-light hover:bg-gray-300 border ml-3">Cancel</router-link>
     </form>
   </div>
 

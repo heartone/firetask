@@ -1,19 +1,24 @@
 <script setup>
 import { ref } from "vue"
 import{ db } from '@/FirebaseConfig.js'
-import { onSnapshot, collection, doc, getDocs, deleteDoc  } from "firebase/firestore"
-import TaskCard from '@/components/TaskCard.vue'
+import { onSnapshot, collection, getDocs, query, orderBy  } from "firebase/firestore"
+import TasksCol from '@/components/TasksCol.vue'
 
 const tasks = ref([])
 const getTasks = async () => {
   try {
-    const querySnapshot = await getDocs(collection(db, "tasks"))
+    const tasksRef = collection(db, "tasks")
+    const querySnapshot = await getDocs(
+      query(
+        tasksRef, orderBy("priority", "asc")//, orderBy("createdAt", "desc")
+      )
+    )
+    // const querySnapshot = await getDocs(collection(db, "tasks"))
     tasks.value = querySnapshot.docs.map(doc => ({
       id: doc.id, ...doc.data()
     }))
-
   } catch (error) {
-
+    console.log(error)
   } finally {
 
   }
@@ -21,18 +26,16 @@ const getTasks = async () => {
 
 onSnapshot(collection(db, "tasks"), () => getTasks());
 </script>
+<style scoped>
+.tasksCols {
+  min-width: 1000px;
+}
+</style>
 <template>
 
-  <div class="grid grid-cols-3 gap-2">
-    <div>
-      <div class="mb-3 flex justify-center items-center">
-        <span class="text-lg">TODO</span>
-        <span class="py-0.5 px-2 text-sm rounded bg-indigo-200 ml-3">{{ tasks.length }}</span></div>
-      <ul class="bg-gray-300 px-3 py-1 rounded">
-        <div v-for="task in tasks" :key="task.id">
-          <TaskCard :task="task" />
-        </div>
-      </ul>
-    </div>
+  <div class="tasksCols grid grid-cols-3 gap-2">
+    <TasksCol status="todo" :tasks="tasks.filter(task => task.status == 'todo')" />
+    <TasksCol status="doing" :tasks="tasks.filter(task => task.status == 'doing')" />
+    <TasksCol status="done" :tasks="tasks.filter(task => task.status == 'done')" />
   </div>
 </template>
