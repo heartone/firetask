@@ -1,11 +1,11 @@
 <script setup>
-import NewTask from '@/components/NewTask.vue'
-import TasksList from '@/components/TasksList.vue'
+import TaskHeader from '@/views/tasks/TaskHeader.vue'
+import TasksList from '@/views/tasks/TasksList.vue'
 
 </script>
 <template>
 
-    <NewTask />
+  <TaskHeader />
 
   <div class="container-fluid py-3 overflow-x-auto">
     <TasksList />

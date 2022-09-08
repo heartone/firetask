@@ -2,7 +2,7 @@
 import { ref } from "vue"
 import{ db } from '@/FirebaseConfig.js'
 import { onSnapshot, collection, getDocs, query, orderBy  } from "firebase/firestore"
-import TasksCol from '@/components/TasksCol.vue'
+import TasksCol from '@/views/tasks/TasksCol.vue'
 
 const tasks = ref([])
 const getTasks = async () => {

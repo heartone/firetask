@@ -1,5 +1,5 @@
 <script setup>
-import TaskCard from '@/components/TaskCard.vue'
+import TaskCard from '@/views/tasks/TaskCard.vue'
 const props = defineProps(['status', 'tasks'])
 </script>
 

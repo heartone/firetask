@@ -5,15 +5,10 @@ import { doc, updateDoc, deleteDoc  } from "firebase/firestore"
 import Dropdown from '@/components/Dropdown.vue'
 
 const statuses = ['todo', 'doing', 'done']
-const updateStatus = async (taskId, status) => {
-  await updateDoc(doc(db, "tasks", taskId), {
-    status: status
-  })
-}
-const updatePriority = async (taskId, priority) => {
-  await updateDoc(doc(db, "tasks", taskId), {
-    priority: priority
-  })
+const updateStatus = (taskId, status) => updateTask(taskId, {status: status})
+const updatePriority = (taskId, priority) => updateTask(taskId, {priority: priority})
+const updateTask = async (taskId, field) => {
+  await updateDoc(doc(db, "tasks", taskId), field)
 }
 const deleteTask = async (taskId) => {
   await deleteDoc(doc(db, "tasks", taskId))
@@ -34,19 +29,28 @@ const deleteTask = async (taskId) => {
 .bg-priority-A {
   background: #e67e22;
 }
+.bg-priority-A:hover {
+  background: #d35400;
+}
 .bg-priority-B {
   background: #3498db;
+}
+.bg-priority-B:hover {
+  background: #2980b9;
 }
 .bg-priority-C {
   background: #95a5a6;
 }
+.bg-priority-C:hover {
+  background: #7f8c8d;
+}
 </style>
 <template>
-  <div class="p-2 mb-5 bg-white shadow-lg rounded">
+  <div class="p-2 mb-5 bg-white shadow-lg rounded" draggable="true">
     <div class="flex">
       <Dropdown align="left" width="24">
         <template #trigger>
-          <div class="px-2 mr-2 cursor-pointer text-white hover:text-yellow-200" :class="'bg-priority-' + task.priority">{{task.priority}}</div>
+          <div class="px-2 mr-2 cursor-pointer text-white" :class="'bg-priority-' + task.priority">{{task.priority}}</div>
         </template>
         <template #content>
           <template v-for="(priority, index) in ['A','B','C']" :key="index">
