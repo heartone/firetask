@@ -58,7 +58,7 @@ const deleteTask = async (taskId) => {
           </template>
         </template>
       </Dropdown>
-      <div><router-link :to="{name: 'taskEdit', params: {taskId: task.id}}" class="hover:text-blue-700 w-full">{{ task.content }}</router-link></div>
+      <div><router-link :to="{name: 'task', params: {taskId: task.id}}" class="hover:text-blue-700 w-full">{{ task.content }}</router-link></div>
     </div>
     <div class="mt-2 tracking-wider text-xs text-gray-500">{{ task.createdAt.toDate().toLocaleString() }}</div>
     <div class="flex mt-2">

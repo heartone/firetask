@@ -1,16 +1,17 @@
 <script setup>
 import { ref } from "vue"
 import{ db } from '@/FirebaseConfig.js'
-import { onSnapshot, collection, getDocs, query, orderBy  } from "firebase/firestore"
+import { onSnapshot, collection, getDocs, query, where, orderBy  } from "firebase/firestore"
 import TasksCol from '@/views/tasks/TasksCol.vue'
-
+import { useRoute, useRouter } from 'vue-router'
+const projectId = useRoute().params.projectId
 const tasks = ref([])
 const getTasks = async () => {
   try {
     const tasksRef = collection(db, "tasks")
     const querySnapshot = await getDocs(
       query(
-        tasksRef, orderBy("priority", "asc")//, orderBy("createdAt", "desc")
+        tasksRef, where("projectId", "==", projectId), orderBy("priority", "asc")//, orderBy("createdAt", "desc")
       )
     )
     // const querySnapshot = await getDocs(collection(db, "tasks"))

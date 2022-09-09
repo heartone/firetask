@@ -1,6 +1,6 @@
 <script setup>
 import NewTask from '@/views/tasks/NewTask.vue'
-import Progress from '@/views/tasks/Progress.vue'
+import Progress from '@/components/Progress.vue'
 </script>
 
 <template>
@@ -8,7 +8,7 @@ import Progress from '@/views/tasks/Progress.vue'
     <div class="grid grid-cols-3 gap-2 items-center">
       <NewTask />
       <div></div>
-      <Progress />
+      <Progress :value="20" />
     </div>
   </div>
 </template>
