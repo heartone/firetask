@@ -29,8 +29,8 @@ const updateTask = async () => {
 </script>
 <template>
   <div class="container-fluid py-3">
-    <div class="flex">
-      <div class="w-1/3 mr-5">
+    <div class="sm:flex">
+      <div class="sm:w-1/3 sm:mr-5 mb-5">
         <h3 class="text-xl mb-3">タスクの編集</h3>
         <form @submit.prevent="updateTask">
           <dl class="form-list">
@@ -43,7 +43,7 @@ const updateTask = async () => {
         </form>
       </div>
 
-      <div class="2/3 ml-5">
+      <div class="sm:2/3 sm:ml-5">
         <h3 class="text-xl mb-3">タスク情報</h3>
       </div>
 
