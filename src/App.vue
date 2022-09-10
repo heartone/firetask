@@ -33,9 +33,12 @@ onSnapshot(collection(db, "projects"), () => getProjects());
 </script>
 
 <template>
-  <TopHeader />
-  <main>
-    <!-- <SideBar /> -->
-    <RouterView />
-  </main>
+  <div class="flex flex-col min-h-screen">
+    <TopHeader />
+    <main class="flex-grow">
+      <!-- <SideBar /> -->
+      <RouterView />
+    </main>
+    <footer class="py-5 flex justify-center text-xs text-gray-500">&copy; 有限会社ハートワン</footer>
+  </div>
 </template>

@@ -1,18 +1,21 @@
 <script setup>
 const props = defineProps(['task'])
 import{ db } from '@/FirebaseConfig.js'
-import { doc, updateDoc, deleteDoc  } from "firebase/firestore"
+import { doc, updateDoc, deleteDoc, onSnapshot  } from "firebase/firestore"
 import Dropdown from '@/components/Dropdown.vue'
+const emits = defineEmits(['onUpdateTask'])
 
 const statuses = ['todo', 'doing', 'done']
-const updateStatus = (taskId, status) => updateTask(taskId, {status: status})
-const updatePriority = (taskId, priority) => updateTask(taskId, {priority: priority})
-const updateTask = async (taskId, field) => {
-  await updateDoc(doc(db, "tasks", taskId), field)
+const updateStatus = (status) => updateTask({status: status})
+const updatePriority = (priority) => updateTask({priority: priority})
+const updateTask = async (field) => {
+  await updateDoc(doc(db, "tasks", props.task.id), field)
 }
-const deleteTask = async (taskId) => {
-  await deleteDoc(doc(db, "tasks", taskId))
+
+const deleteTask = async () => {
+  await deleteDoc(doc(db, "tasks", props.task.id))
 }
+
 </script>
 
 <style scoped>
@@ -54,7 +57,7 @@ const deleteTask = async (taskId) => {
         </template>
         <template #content>
           <template v-for="(priority, index) in ['A','B','C']" :key="index">
-            <div class="dropdown-link" @click="updatePriority(task.id, priority)">{{ priority }}</div>
+            <div class="dropdown-link" @click="updatePriority(priority)">{{ priority }}</div>
           </template>
         </template>
       </Dropdown>
@@ -63,9 +66,9 @@ const deleteTask = async (taskId) => {
     <div class="mt-2 tracking-wider text-xs text-gray-500">{{ task.createdAt.toDate().toLocaleString() }}</div>
     <div class="flex mt-2">
       <template v-for="(status, index) in statuses" :key="index">
-        <button @click="updateStatus(task.id, status)" class="p-1 w-full text-xs text-white hover:bg-pink-300" :class="{'bg-gray-300': task.status == status, 'bg-gray-400': task.status != status}">{{ status.toUpperCase() }}</button>
+        <button @click="updateStatus(status)" class="p-1 w-full text-xs text-white hover:bg-pink-300" :class="{'bg-gray-300': task.status == status, 'bg-gray-400': task.status != status}">{{ status.toUpperCase() }}</button>
       </template>
-      <button class="p-1 w-full text-xs text-white bg-gray-400 hover:bg-pink-300" @click="deleteTask(task.id)">DELETE</button>
+      <button class="p-1 w-full text-xs text-white bg-gray-400 hover:bg-pink-300" @click="deleteTask()">DELETE</button>
     </div>
   </div>
 </template>

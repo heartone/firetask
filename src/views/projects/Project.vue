@@ -9,9 +9,7 @@ import { useAppStore } from '@/stores/app.js'
 const route = useRoute()
 const appStore = useAppStore()
 const projectId = route.params.projectId
-onMounted(() => {
-  appStore.currentProjectId = projectId
-})
+appStore.currentProjectId = projectId
 </script>
 <template>
 

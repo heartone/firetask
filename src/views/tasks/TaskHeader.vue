@@ -1,6 +1,10 @@
 <script setup>
 import NewTask from '@/views/tasks/NewTask.vue'
-import Progress from '@/components/Progress.vue'
+import ProjectProgress from '@/views/projects/ProjectProgress.vue'
+import { useAppStore } from '@/stores/app.js'
+import { reactive } from 'vue'
+const props = defineProps(['progressCount'])
+const appStore = useAppStore()
 </script>
 
 <template>
@@ -8,7 +12,7 @@ import Progress from '@/components/Progress.vue'
     <div class="sm:grid sm:grid-cols-2 md:grid-cols-3 gap-2 items-center">
       <NewTask />
       <div></div>
-      <Progress class="my-2 md:m-0" :value="20" />
+      <ProjectProgress class="my-2 md:m-0" :count="progressCount" />
     </div>
   </div>
 </template>

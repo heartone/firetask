@@ -21,7 +21,7 @@ const router = createRouter({
     {
       path: '/projects/:projectId',
       name: 'project',
-      component: () => import('@/views/projects/Project.vue'),
+      component: () => import('@/views/tasks/TasksList.vue'),
       beforeEnter: requireAuth
     },
     {

@@ -23,6 +23,8 @@ const createTask = async () => {
     });
     newTask.content = ''
     inputNewTaskContent.value.focus()
+    // プロジェクト進捗更新
+    // todo
   } catch (error) {
     console.error(error);
   }
