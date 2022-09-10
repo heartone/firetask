@@ -4,7 +4,10 @@
 @tailwind utilities;
 .logo {
     font-family: 'lato'
-  }
+}
+.container {
+  @apply mx-auto w-[1200px]
+}
 .container-fluid {
   @apply w-full px-4
 }
