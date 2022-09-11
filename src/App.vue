@@ -18,7 +18,7 @@ const getProjects = async () => {
     const projectsRef = collection(db, "projects")
     const querySnapshot = await getDocs(
       query(
-        projectsRef, where('uid', '==', appStore.currentUser.uid), orderBy("order", "asc")
+        projectsRef, where('uid', '==', appStore.currentUser.uid), orderBy("priority", "desc")
       )
     )
     appStore.projects = querySnapshot.docs.map(doc => ({

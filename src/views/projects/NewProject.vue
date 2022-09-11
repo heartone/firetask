@@ -8,7 +8,7 @@ const inputNewProjectName = ref(null)
 const newProject = reactive({
   name: '',
   uid: useAppStore().currentUser.uid,
-  order: 0
+  priority: 0
 })
 const createProject = async () => {
   try {
