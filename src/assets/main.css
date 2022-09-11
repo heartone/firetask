@@ -2,6 +2,8 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+/* @import './github-markdown-css.css'; */
+/* @import './highlightjs.css'; */
 .logo {
     font-family: 'lato'
 }
@@ -72,13 +74,13 @@
 * form-list
 ---------------------------- */
 dl.form-list {
-  @apply sm:flex flex-wrap;
+
 }
 .form-list dt {
-  @apply sm:w-1/4 text-gray-600 mb-1 pt-2 font-bold text-sm;
+  @apply text-gray-600 mb-1 pt-2 font-bold text-sm;
 }
 .form-list dd {
-  @apply sm:w-3/4 grow mb-5;
+  @apply grow mb-4;
 }
 
 /* ----------------------------

@@ -10,6 +10,7 @@ const showModal = ref(false)
 const emits = defineEmits(['onDeleteTask'])
 
 const statuses = ['todo', 'doing', 'done']
+
 const updateStatus = (status) => updateTask({status: status})
 const updatePriority = (priority) => updateTask({priority: priority})
 const updateTask = async (field) => {
@@ -65,14 +66,17 @@ const deleteTask = async () => {
           </template>
         </template>
       </Dropdown>
-      <div><router-link :to="{name: 'task', params: {taskId: task.id}}" class="hover:text-blue-700 w-full">{{ task.content }}</router-link></div>
+      <div><router-link :to="{name: 'task', params: {taskId: task.id}}" class="hover:text-blue-700 w-full" :class="{ 'text-gray-400': !task.content.length }">{{ task.content || '無題のタスク' }}</router-link></div>
     </div>
-    <div class="mt-2 tracking-wider text-xs text-gray-500">{{ task.createdAt.toDate().toLocaleString() }}</div>
-    <div class="flex mt-2">
+    <div class="flex justify-between mt-2 tracking-wider text-xs text-gray-500">
+      {{ task.createdAt.toDate().toLocaleDateString('ja-JP', {weekday: 'short', year: 'numeric', month: 'long', day: 'numeric', hour: 'numeric', minute: 'numeric'}) }}
+      <span v-if="task.description.length > 0"><i class="fa fa-pen-square mr-1"></i>{{ task.description.length}}char</span>
+    </div>
+    <div class="grid grid-cols-4 gap-0.5 mt-2">
       <template v-for="(status, index) in statuses" :key="index">
-        <button @click="updateStatus(status)" class="p-1 w-full text-xs text-white hover:bg-pink-300" :class="{'bg-gray-300': task.status == status, 'bg-gray-400': task.status != status}">{{ status.toUpperCase() }}</button>
+        <button @click="updateStatus(status)" class="p-1 w-full text-xs text-white hover:bg-gray-500" :class="{'bg-gray-300': task.status == status, 'bg-gray-400': task.status != status}">{{ status.toUpperCase() }}</button>
       </template>
-      <button class="p-1 w-full text-xs text-white bg-gray-400 hover:bg-pink-300" @click="showModal=true">DELETE</button>
+      <button class="p-1 w-full text-xs text-white bg-gray-400 hover:bg-gray-500" @click="showModal=true">DELETE</button>
     </div>
   </div>
     <Modal :show="showModal" @close="showModal=false">

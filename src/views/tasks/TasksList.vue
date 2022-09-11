@@ -8,11 +8,11 @@ import TasksCol from '@/views/tasks/TasksCol.vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useAppStore } from '@/stores/app.js'
 
-
 const appStore = useAppStore()
 const projectId = useRoute().params.projectId
 appStore.currentProjectId = projectId
 const tasks = ref([])
+const isTasksLoading = ref(false)
 const statuses = ['todo', 'doing', 'done']
 const tasksRef = collection(db, "tasks")
 const progressCount = computed(() => {
@@ -24,6 +24,7 @@ const progressCount = computed(() => {
   return count
 })
 const getTasks = async () => {
+  isTasksLoading.value = true
   try {
     const querySnapshot = await getDocs(
       query(
@@ -36,6 +37,8 @@ const getTasks = async () => {
     }))
   } catch (error) {
     console.error(error)
+  } finally {
+    isTasksLoading.value = false
   }
 }
 // 変更を監視
@@ -74,7 +77,11 @@ watch(progressCount, (newValue, oldValue) => {
 <template>
   <TaskHeader :progressCount="progressCount"  />
   <div class="container-fluid py-3 overflow-x-auto">
-    <div class="tasksCols grid grid-cols-3 gap-4">
+    <div v-if="isTasksLoading" class="flex justify-center text-sm py-6 text-gray-400">
+      Loading...
+    </div>
+
+    <div v-show="tasks.length" class="tasksCols grid grid-cols-3 gap-4">
       <template v-for="status in statuses" :key="status">
         <TasksCol :status="status" :tasks="tasks.filter(task => task.status == status)" />
       </template>
