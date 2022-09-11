@@ -11,9 +11,11 @@ const appStore = useAppStore()
 // ログインを監視
 auth.onAuthStateChanged(user => {
   appStore.currentUser = user
+  if (user) getProjects()
 })
 // プロジェクト一覧をセット
 const getProjects = async () => {
+  if (!appStore.currentUser) return
   try {
     const projectsRef = collection(db, "projects")
     const querySnapshot = await getDocs(
