@@ -3,7 +3,11 @@ const props = defineProps(['task'])
 import{ db } from '@/FirebaseConfig.js'
 import { doc, updateDoc, deleteDoc, onSnapshot  } from "firebase/firestore"
 import Dropdown from '@/components/Dropdown.vue'
-const emits = defineEmits(['onUpdateTask'])
+import Modal from '@/components/Modal.vue'
+import { ref } from 'vue'
+const showModal = ref(false)
+
+const emits = defineEmits(['onDeleteTask'])
 
 const statuses = ['todo', 'doing', 'done']
 const updateStatus = (status) => updateTask({status: status})
@@ -68,7 +72,17 @@ const deleteTask = async () => {
       <template v-for="(status, index) in statuses" :key="index">
         <button @click="updateStatus(status)" class="p-1 w-full text-xs text-white hover:bg-pink-300" :class="{'bg-gray-300': task.status == status, 'bg-gray-400': task.status != status}">{{ status.toUpperCase() }}</button>
       </template>
-      <button class="p-1 w-full text-xs text-white bg-gray-400 hover:bg-pink-300" @click="deleteTask()">DELETE</button>
+      <button class="p-1 w-full text-xs text-white bg-gray-400 hover:bg-pink-300" @click="showModal=true">DELETE</button>
     </div>
   </div>
+    <Modal :show="showModal" @close="showModal=false">
+    <template #title>削除確認</template>
+    <template #content>
+      <div>本当に削除しますか？</div>
+    </template>
+    <template #footer class="flex justify-center">
+      <button class="btn btn-danger mr-3" @click="deleteTask">はい</button>
+      <button class="btn btn-secondary" @click="showModal=false">いいえ</button>
+    </template>
+  </Modal>
 </template>

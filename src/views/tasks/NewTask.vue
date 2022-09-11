@@ -33,6 +33,6 @@ const createTask = async () => {
 <template>
   <form @submit.prevent="createTask()" class="flex">
     <input type="text" ref="inputNewTaskContent" v-model="newTask.content" class="flex-grow form-control-sm" placeholder="タスクを入力" autofocus>
-    <button type="submit" class="btn-sm btn-dark ml-1">追加</button>
+    <button type="submit" class="btn-sm btn-dark ml-1">Add Task</button>
   </form>
 </template>

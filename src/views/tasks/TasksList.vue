@@ -1,12 +1,12 @@
 <script setup>
 import TaskHeader from '@/views/tasks/TaskHeader.vue'
 import { ref, computed, watch } from "vue"
+
 import{ db } from '@/FirebaseConfig.js'
 import { onSnapshot, collection, getDocs, query, where, orderBy, updateDoc, doc  } from "firebase/firestore"
 import TasksCol from '@/views/tasks/TasksCol.vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useAppStore } from '@/stores/app.js'
-
 
 
 const appStore = useAppStore()
@@ -47,7 +47,7 @@ watch(progressCount, (newValue, oldValue) => {
 
   // 現在のプロジェクトの値を更新
   if (
-    JSON.stringify(Object.entries(appStore.currentProject.count).sort())
+    JSON.stringify(Object.entries(appStore.currentProject.count || {}).sort())
     !=
     JSON.stringify(Object.entries(progressCount.value).sort())
   )
@@ -65,7 +65,6 @@ watch(progressCount, (newValue, oldValue) => {
 })
 
 
-
 </script>
 <style scoped>
 .tasksCols {
@@ -74,7 +73,6 @@ watch(progressCount, (newValue, oldValue) => {
 </style>
 <template>
   <TaskHeader :progressCount="progressCount"  />
-
   <div class="container-fluid py-3 overflow-x-auto">
     <div class="tasksCols grid grid-cols-3 gap-4">
       <template v-for="status in statuses" :key="status">
@@ -82,4 +80,5 @@ watch(progressCount, (newValue, oldValue) => {
       </template>
     </div>
   </div>
+
 </template>
