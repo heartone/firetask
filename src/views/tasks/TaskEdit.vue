@@ -75,6 +75,7 @@ const updateTask = async () => {
       projectId: editTask.value.projectId,
     });
     getTask()
+    appStore.flash = '保存しました'
   } catch (error) {
     console.error(error)
   }
@@ -116,6 +117,7 @@ const updateTask = async () => {
           <dt>メモ</dt>
           <dd>
             <textarea v-model="editTask.description" class="form-control w-full text-sm" rows="7"></textarea>
+            <div class="mt-3 hidden md:block text-sm text-gray-500">ctrl + s または command + s で保存</div>
           </dd>
           <dt>プロジェクトを変更</dt>
           <dd>

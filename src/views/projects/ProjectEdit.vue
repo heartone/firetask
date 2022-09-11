@@ -9,6 +9,7 @@ import '@/assets/github-markdown-css.css'
 import 'highlight.js/styles/monokai.css';
 import PageHeader from '@/components/PageHeader.vue'
 import Markdown from 'vue3-markdown-it'
+import Modal from '@/components/Modal.vue'
 
 const appStore = useAppStore()
 const route = useRoute()
@@ -16,13 +17,16 @@ const router = useRouter()
 const projectId = route.params.projectId
 const editProject = ref({})
 const originProject = ref({})
-
+if (!appStore.currentProjectId) {
+  appStore.currentProjectId = projectId
+}
 // プロジェクト取得
 const getProject = async () => {
   try {
     const docSnap = await getDoc(doc(db, "projects", projectId));
     editProject.value = docSnap.data()
     originProject.value = docSnap.data()
+
   } catch (error) {
     console.error(error)
   }
@@ -59,31 +63,32 @@ const saveByShortcutKey = (event) => {
 // プロジェクト編集
 const updateProject = async () => {
   await updateDoc(doc(db, "projects", projectId), {
-    name: editProject.value.name,
-    priority: parseInt(editProject.value.priority),
-    description: editProject.value.description,
+    name: editProject.value.name || '',
+    priority: parseInt(editProject.value.priority) || 0,
+    description: editProject.value.description || '',
   });
   getProject()
-  // appStore.currentProjectId = projectId
-  // router.push({name: 'project', params: {projectId: projectId}})
+  appStore.flash = '保存しました'
+
 }
 // プロジェクト削除
+const showModal = ref(false)
 const deleteProject = async () => {
-  if (confirm('削除しますか？')) {
-    // 関連タスクを削除
-    const tasksRef = collection(db, "tasks")
-    const querySnapshot = await getDocs(
-      query(
-        tasksRef, where("projectId", "==", projectId)
-      )
+  // 関連タスクを削除
+  const tasksRef = collection(db, "tasks")
+  const querySnapshot = await getDocs(
+    query(
+      tasksRef, where("projectId", "==", projectId)
     )
-    querySnapshot.docs.map(task => {
-       deleteDoc(doc(db, "tasks", task.id))
-    })
-    // プロジェクトを削除
-    await deleteDoc(doc(db, "projects", projectId))
-    router.push({name: 'home'})
-  }
+  )
+  querySnapshot.docs.map(task => {
+     deleteDoc(doc(db, "tasks", task.id))
+  })
+  // プロジェクトを削除
+  await deleteDoc(doc(db, "projects", projectId))
+  router.push({name: 'home'})
+  appStore.flash = 'プロジェクトを削除しました'
+
 }
 
 </script>
@@ -116,7 +121,7 @@ const deleteProject = async () => {
             <textarea @keydown="save" v-model="editProject.description" class="form-control w-full text-sm" rows="10"></textarea>
           </dd>
         </dl>
-        <div class="text-sm text-gray-500">ctrl + s または command + s で保存</div>
+        <div class="hidden md:block text-sm text-gray-500">ctrl + s または command + s で保存</div>
       </div>
 
       <div class="md:col-span-7 bg-white rounded-lg p-3 overflow-y-auto">
@@ -126,8 +131,15 @@ const deleteProject = async () => {
     </div>
     <hr class="mt-6">
     <div class="mt-6">
-      <button class="btn-sm" @click="deleteProject"><i class="fa fa-trash-alt mr-2"></i>Delete</button>
+      <button class="btn-sm" @click="showModal=true"><i class="fa fa-trash-alt mr-2"></i>Delete</button>
     </div>
   </div>
-
+  <Modal :show="showModal" @close="showModal=false">
+    <template #title>削除確認</template>
+    <template #content>このプロジェクトと関連タスクをすべて削除します。よろしいですか？</template>
+    <template #footer>
+      <button @click="deleteProject" class="btn btn-danger">Delete</button>
+      <button @click="showModal=false" class="btn btn-secondary ml-3">Cancel</button>
+    </template>
+  </Modal>
 </template>

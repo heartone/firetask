@@ -8,7 +8,8 @@ export const useAppStore = defineStore('app', {
     currentUser: ref(null),
     currentProjectId: ref(null),
     projects: ref([]),
-    tasks: ref([])
+    tasks: ref([]),
+    flash: ref('')
   }),
   getters: {
     currentProject: (state) => state.projects.find((p) => p.id == state.currentProjectId)

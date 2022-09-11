@@ -1,18 +1,18 @@
 <script setup>
 import TaskHeader from '@/views/tasks/TaskHeader.vue'
-import { ref, computed, watch } from "vue"
-
-import{ db } from '@/FirebaseConfig.js'
-import { onSnapshot, collection, getDocs, query, where, orderBy, updateDoc, doc  } from "firebase/firestore"
 import TasksCol from '@/views/tasks/TasksCol.vue'
+import Modal from '@/components/Modal.vue'
+import { ref, computed, watch } from "vue"
+import{ db } from '@/FirebaseConfig.js'
+import { onSnapshot, collection, getDocs, query, where, orderBy, updateDoc, deleteDoc, doc  } from "firebase/firestore"
 import { useRoute, useRouter } from 'vue-router'
 import { useAppStore } from '@/stores/app.js'
 
+const showModal = ref(false)
 const appStore = useAppStore()
 const projectId = useRoute().params.projectId
 appStore.currentProjectId = projectId
 const tasks = ref([])
-const isTasksLoading = ref(false)
 const statuses = ['todo', 'doing', 'done']
 const tasksRef = collection(db, "tasks")
 const progressCount = computed(() => {
@@ -24,30 +24,23 @@ const progressCount = computed(() => {
   return count
 })
 const getTasks = async () => {
-  isTasksLoading.value = true
   try {
     const querySnapshot = await getDocs(
       query(
         tasksRef, where("projectId", "==", projectId), orderBy("priority", "asc")//, orderBy("createdAt", "desc")
       )
     )
-    // const querySnapshot = await getDocs(collection(db, "tasks"))
     tasks.value = querySnapshot.docs.map(doc => ({
       id: doc.id, ...doc.data()
     }))
   } catch (error) {
     console.error(error)
-  } finally {
-    isTasksLoading.value = false
   }
 }
 // 変更を監視
-onSnapshot(tasksRef,  () => {
-  getTasks()
-})
+onSnapshot(tasksRef,  () => getTasks())
 
 watch(progressCount, (newValue, oldValue) => {
-
   // 現在のプロジェクトの値を更新
   if (
     JSON.stringify(Object.entries(appStore.currentProject.count || {}).sort())
@@ -60,14 +53,28 @@ watch(progressCount, (newValue, oldValue) => {
       count: newValue
     });
     appStore.currentProject.count = progressCount.value
-    console.log('updateProgressCount!!!')
-
   } catch (error) {
     console.error(error)
   }
 })
 
-
+// タスク削除
+const deleteTaskId = ref(null)
+const deleteTaskYesButton = ref(null)
+const onDeleteTask = (taskId) => {
+  deleteTaskId.value = taskId
+  showModal.value = true
+  deleteTaskYesButton.value.focus()
+}
+const deleteTask = async () => {
+  try {
+    await deleteDoc(doc(db, "tasks", deleteTaskId.value))
+    appStore.flash = 'タスクを削除しました'
+    showModal.value = false
+  } catch (error) {
+    console.log(error)
+  }
+}
 </script>
 <style scoped>
 .tasksCols {
@@ -77,15 +84,20 @@ watch(progressCount, (newValue, oldValue) => {
 <template>
   <TaskHeader :progressCount="progressCount"  />
   <div class="container-fluid py-3 overflow-x-auto">
-    <div v-if="isTasksLoading" class="flex justify-center text-sm py-6 text-gray-400">
-      Loading...
-    </div>
-
-    <div v-show="tasks.length" class="tasksCols grid grid-cols-3 gap-4">
+    <div class="tasksCols grid grid-cols-3 gap-4">
       <template v-for="status in statuses" :key="status">
-        <TasksCol :status="status" :tasks="tasks.filter(task => task.status == status)" />
+        <TasksCol @onDeleteTask="onDeleteTask" :status="status" :tasks="tasks.filter(task => task.status == status)" />
       </template>
     </div>
   </div>
-
+  <Modal :show="showModal" @close="showModal=false">
+    <template #title>削除確認</template>
+    <template #content>
+      <div>本当に削除しますか？</div>
+    </template>
+    <template #footer class="flex justify-center">
+      <button ref="deleteTaskYesButton" class="btn btn-danger mr-3" @click="deleteTask">Delete</button>
+      <button class="btn btn-secondary" @click="showModal=false">Cancel</button>
+    </template>
+  </Modal>
 </template>

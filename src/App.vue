@@ -5,7 +5,7 @@ import { onSnapshot, collection, getDocs, query ,where, orderBy } from "firebase
 import { useAppStore } from '@/stores/app.js'
 import { RouterLink, RouterView } from 'vue-router'
 import TopHeader from '@/components/TopHeader.vue'
-// import SideBar from '@/components/SideBar.vue'
+import Flash from '@/components/Flash.vue'
 const auth = getAuth()
 const appStore = useAppStore()
 // ログインを監視
@@ -36,6 +36,7 @@ onSnapshot(collection(db, "projects"), () => getProjects());
 
 <template>
   <div class="flex flex-col min-h-screen">
+    <Flash />
     <TopHeader />
     <main class="flex-grow">
       <!-- <SideBar /> -->

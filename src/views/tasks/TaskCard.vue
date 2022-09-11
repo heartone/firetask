@@ -3,65 +3,37 @@ const props = defineProps(['task'])
 import{ db } from '@/FirebaseConfig.js'
 import { doc, updateDoc, deleteDoc, onSnapshot  } from "firebase/firestore"
 import Dropdown from '@/components/Dropdown.vue'
-import Modal from '@/components/Modal.vue'
 import { ref } from 'vue'
-const showModal = ref(false)
-
+import { useAppStore } from '@/stores/app.js'
+const appStore = useAppStore()
 const emits = defineEmits(['onDeleteTask'])
+const onDeleteTask = (taskId) => {
+  emits('onDeleteTask', taskId)
+}
 
 const statuses = ['todo', 'doing', 'done']
-
+const priorities = {
+  A: "bg-orange-500 hover:bg-orange-600",
+  B: "bg-blue-500 hover:bg-blue-600",
+  C: "bg-gray-500 hover:bg-gray-600",
+}
 const updateStatus = (status) => updateTask({status: status})
 const updatePriority = (priority) => updateTask({priority: priority})
 const updateTask = async (field) => {
   await updateDoc(doc(db, "tasks", props.task.id), field)
+  appStore.flash = {status: 'ステータス', priority: '優先度'}[Object.keys(field)[0]] + 'を変更しました'
 }
-
-const deleteTask = async () => {
-  await deleteDoc(doc(db, "tasks", props.task.id))
-}
-
 </script>
 
-<style scoped>
-.statusButton {
-  width: 25%;
-  padding: .3rem;
-  background: #aaa;
-  color: #fff;
-  font-size: .8rem;
-}
-.statusButton:hover {
-  background: #bba;
-}
-.bg-priority-A {
-  background: #e67e22;
-}
-.bg-priority-A:hover {
-  background: #d35400;
-}
-.bg-priority-B {
-  background: #3498db;
-}
-.bg-priority-B:hover {
-  background: #2980b9;
-}
-.bg-priority-C {
-  background: #95a5a6;
-}
-.bg-priority-C:hover {
-  background: #7f8c8d;
-}
-</style>
 <template>
   <div class="p-2 mb-5 bg-white shadow-lg rounded" draggable="true">
     <div class="flex">
       <Dropdown align="left" width="24">
         <template #trigger>
-          <div class="px-2 mr-2 cursor-pointer text-white" :class="'bg-priority-' + task.priority">{{task.priority}}</div>
+          <div class="px-2 mr-2 cursor-pointer text-white rounded" :class="priorities[task.priority]">{{task.priority}}</div>
         </template>
         <template #content>
-          <template v-for="(priority, index) in ['A','B','C']" :key="index">
+          <template v-for="(bgColor, priority) in priorities" :key="priority">
             <div class="dropdown-link" @click="updatePriority(priority)">{{ priority }}</div>
           </template>
         </template>
@@ -76,17 +48,7 @@ const deleteTask = async () => {
       <template v-for="(status, index) in statuses" :key="index">
         <button @click="updateStatus(status)" class="p-1 w-full text-xs text-white hover:bg-gray-500" :class="{'bg-gray-300': task.status == status, 'bg-gray-400': task.status != status}">{{ status.toUpperCase() }}</button>
       </template>
-      <button class="p-1 w-full text-xs text-white bg-gray-400 hover:bg-gray-500" @click="showModal=true">DELETE</button>
+      <button class="p-1 w-full text-xs text-white bg-gray-400 hover:bg-gray-500" @click="onDeleteTask(task.id)">DELETE</button>
     </div>
   </div>
-    <Modal :show="showModal" @close="showModal=false">
-    <template #title>削除確認</template>
-    <template #content>
-      <div>本当に削除しますか？</div>
-    </template>
-    <template #footer class="flex justify-center">
-      <button class="btn btn-danger mr-3" @click="deleteTask">はい</button>
-      <button class="btn btn-secondary" @click="showModal=false">いいえ</button>
-    </template>
-  </Modal>
 </template>

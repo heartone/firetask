@@ -6,7 +6,6 @@ import PageHeader from '@/components/PageHeader.vue'
 import { useAppStore } from '@/stores/app.js'
 import { computed } from 'vue'
 const appStore = useAppStore()
-const qrcodeUrl = "https://chart.googleapis.com/chart?cht=qr&chs=200x200&&choe=UTF-8&chl=" + encodeURI(location.href)
 
 const progressCount = computed(() => {
   const count = {
@@ -27,11 +26,11 @@ const progressCount = computed(() => {
       <router-link class="block p-4 bg-white border-b text-xl hover:text-orange-600" :to="{name: 'project', params:{ projectId: project.id }}">
         <div class="md:grid grid-cols-3">
           <div class="flex items-center justify-between">
-              <div class="flex items-center">
+              <div class="flex items-center min-w-0">
                 <i class="fa fa-circle mr-2 text-orange-400" :class="{'text-gray-300': project.id !== appStore.currentProjectId}"></i>
                 <div class="truncate">{{ project.name }}</div>
               </div>
-              <div class="text-xs text-gray-500 mr-2">優先度:{{ project.priority }}</div>
+              <div class="whitespace-nowrap text-xs text-gray-500 mr-2">優先度:{{ project.priority }}</div>
           </div>
           <div class="flex items-center justify-center pt-4 md:pt-0">
 
@@ -45,11 +44,8 @@ const progressCount = computed(() => {
         </div>
       </router-link>
     </template>
-    <div class="py-5">
+    <div class="py-3">
       <Logout />
     </div>
-  </div>
-  <div class="py-5 flex justify-center">
-    <img :src="qrcodeUrl" alt="">
   </div>
 </template>

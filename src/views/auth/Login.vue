@@ -24,11 +24,10 @@ const loginGoogle = async () => {
   return false // Googleログイン無効
   const provider = new GoogleAuthProvider();
   signInWithPopup(auth, provider).then(() => {
-    console.log("User signed in");
     router.push("/");
   }).catch((error) => {
       isLoading.value = false;
-      console.log(error);
+      console.error(error);
       errMsg.value = "There was a problem loggin in";
     });
 };
