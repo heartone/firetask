@@ -1,7 +1,7 @@
 <script setup>
 import{ db } from '@/FirebaseConfig.js'
 import { getAuth } from 'firebase/auth'
-import { onSnapshot, collection, getDocs, query, orderBy } from "firebase/firestore"
+import { onSnapshot, collection, getDocs, query ,where, orderBy } from "firebase/firestore"
 import { useAppStore } from '@/stores/app.js'
 import { RouterLink, RouterView } from 'vue-router'
 import TopHeader from '@/components/TopHeader.vue'
@@ -18,7 +18,7 @@ const getProjects = async () => {
     const projectsRef = collection(db, "projects")
     const querySnapshot = await getDocs(
       query(
-        projectsRef, orderBy("order", "asc")
+        projectsRef, where('uid', '==', appStore.currentUser.uid), orderBy("order", "asc")
       )
     )
     appStore.projects = querySnapshot.docs.map(doc => ({

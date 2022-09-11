@@ -2,15 +2,27 @@
 import NewProject from '@/views/projects/NewProject.vue'
 import ProjectProgress from '@/views/projects/ProjectProgress.vue'
 import Logout from '@/components/Logout.vue'
+import PageHeader from '@/components/PageHeader.vue'
 import { useAppStore } from '@/stores/app.js'
+import { computed } from 'vue'
 const appStore = useAppStore()
 const qrcodeUrl = "https://chart.googleapis.com/chart?cht=qr&chs=200x200&&choe=UTF-8&chl=" + encodeURI(location.href)
+
+const progressCount = computed(() => {
+  const count = {
+    todo: appStore.projects.reduce((sum, p) => sum += (p.count?.todo || 0), 0),
+    doing: appStore.projects.reduce((sum, p) => sum += (p.count?.doing || 0), 0),
+    done: appStore.projects.reduce((sum, p) => sum += (p.count?.done || 0), 0),
+  }
+  return count
+})
 </script>
 <template>
+  <PageHeader>
+    <NewProject />
+    <ProjectProgress class="mt-2 md:m-0" :count=progressCount />
+  </PageHeader>
   <div class="container-fluid py-3">
-    <div class="bg-white border-b">
-      <NewProject />
-    </div>
     <template v-for="project in appStore.projects" :key="project.id">
       <router-link class="block p-4 bg-white border-b text-xl hover:text-orange-600" :to="{name: 'project', params:{ projectId: project.id }}">
         <div class="md:grid grid-cols-3">

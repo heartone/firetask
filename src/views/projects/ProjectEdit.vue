@@ -52,14 +52,19 @@ const deleteProject = async () => {
 </script>
 <template>
   <div class="container-fluid py-3">
-    <h3 class="text-xl mb-3">プロジェクトの編集</h3>
-    <form @submit.prevent="updateProject">
-      <div class="mb-3"><input type="text" v-model="editProject.name" class="form-control" placeholder="プロジェクト名を入力" autofocus></div>
-      <button type="submit" class="btn btn-success">Update</button>
-      <router-link :to="{name: 'project', params: {projectId: projectId}}" class="btn btn-light ml-3">Cancel</router-link>
-    </form>
-    <div class="mt-6">
-      <button class="btn" @click="deleteProject"><i class="fa fa-trash-alt mr-2"></i>削除</button>
+    <div class="grid md:grid-cols-2 gap-5">
+      <div class="">
+        <h3 class="text-xl mb-3">プロジェクトの編集</h3>
+        <form @submit.prevent="updateProject">
+          <div class="mb-3"><input type="text" v-model="editProject.name" class="form-control w-full" placeholder="プロジェクト名を入力" autofocus></div>
+          <button type="submit" class="btn btn-success">Update</button>
+          <router-link :to="{name: 'project', params: {projectId: projectId}}" class="btn btn-light ml-3">Cancel</router-link>
+        </form>
+        <div class="mt-6">
+          <button class="btn" @click="deleteProject"><i class="fa fa-trash-alt mr-2"></i>Delete</button>
+        </div>
+      </div>
+
     </div>
   </div>
 
