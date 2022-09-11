@@ -21,6 +21,7 @@ const login = async () => {
   }
 };
 const loginGoogle = async () => {
+  return false // Googleログイン無効
   const provider = new GoogleAuthProvider();
   signInWithPopup(auth, provider).then(() => {
     console.log("User signed in");
@@ -53,12 +54,6 @@ const loginGoogle = async () => {
       <button type="submit" :disabled="isLoading" class="btn btn-primary">Login</button>
     </div>
   </form>
-    <div class="mb-3">or</div>
-    <div class="mb-6">
-      <button  class="btn bg-yellow-400 hover:bg-yellow-300" type="submit" @click="loginGoogle">
-        <i class="fab fa-google mr-3"></i>Googleでログイン
-      </button>
-    </div>
   </div>
 </template>
 
