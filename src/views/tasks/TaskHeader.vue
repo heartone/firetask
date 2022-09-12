@@ -1,9 +1,9 @@
 <script setup>
+import { useAppStore } from '@/stores/app.js'
 import NewTask from '@/views/tasks/NewTask.vue'
 import PageHeader from '@/components/PageHeader.vue'
 import ProjectProgress from '@/views/projects/ProjectProgress.vue'
-import { useAppStore } from '@/stores/app.js'
-import { reactive } from 'vue'
+
 const props = defineProps(['progressCount'])
 const appStore = useAppStore()
 </script>

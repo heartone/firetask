@@ -1,12 +1,10 @@
-import { ref, reactive, computed } from 'vue'
+import { ref } from 'vue'
 import { defineStore } from 'pinia'
-import{ db } from '@/FirebaseConfig.js'
-import { onSnapshot, collection, getDocs, query, where, orderBy, updateDoc, doc  } from "firebase/firestore"
-
 export const useAppStore = defineStore('app', {
   state: () => ({
     currentUser: ref(null),
     currentProjectId: ref(null),
+    currentTaskId: ref(null),
     projects: ref([]),
     tasks: ref([]),
     flash: ref('')

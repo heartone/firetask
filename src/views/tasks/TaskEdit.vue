@@ -1,26 +1,27 @@
 <script setup>
 import { computed, ref, onMounted, onUnmounted } from "vue"
-import { useRoute } from 'vue-router'
-import{ db } from '@/FirebaseConfig.js'
-import { doc, getDoc, updateDoc } from "firebase/firestore"
+import { useRoute, useRouter } from 'vue-router'
 import { useAppStore } from '@/stores/app.js'
-import '@/assets/github-markdown-css.css'
-// import '@/assets/highlightjs.css'
-import 'highlight.js/styles/monokai.css';
+import { db } from '@/FirebaseConfig.js'
+import { doc, getDoc, updateDoc } from "firebase/firestore"
 import Markdown from 'vue3-markdown-it'
 import PageHeader from '@/components/PageHeader.vue'
+import '@/assets/github-markdown-css.css'
+import 'highlight.js/styles/monokai.css';
 
 // 状態管理
 const appStore = useAppStore()
-
 // 現在のプロジェクト
-appStore.currentProjectId = useRoute().params.projectId
-
 const route = useRoute()
+const router = useRouter()
 const projectId = route.params.projectId
+appStore.currentProjectId = projectId
+// 現在のタスク
 const taskId = route.params.taskId
+appStore.currentTaskId = null
 const editTask = ref({})
 const originTask = ref({})
+
 // タスク取得
 const getTask = async () => {
   try {
@@ -28,11 +29,12 @@ const getTask = async () => {
     editTask.value = docSnap.data()
     originTask.value = docSnap.data()
   } catch (error) {
-    console.error(error);
+    console.log(error);
   }
 }
 // タスク読み込み
 onMounted(getTask())
+
 // タスクの変更監視
 const isEdited = computed(() => {
   return (
@@ -45,22 +47,29 @@ const isEdited = computed(() => {
     editTask.value.description != originTask.value.description
     ||
     editTask.value.projectId != originTask.value.projectId
-
   )
 })
-// ショートカットキーによる保存
+
+// ショートカットキー登録
 onMounted(() => {
   document.addEventListener('keydown', saveByShortcutKey)
 })
 onUnmounted(() => {
   document.removeEventListener('keydown', saveByShortcutKey)
 })
+
+// ショートカットキー実行
 const saveByShortcutKey = (event) => {
-  if (event.ctrlKey || event.metaKey){
-    if (event.key == 's') {
+  if (event.ctrlKey || event.metaKey){ // ctrlまたはcommandキーを押しながら
+    if (event.key == 's') { // 保存
       event.preventDefault()
-      // 保存
       updateTask()
+    } else if (event.key == 'Enter') { // 保存して終了
+      event.preventDefault()
+      if (isEdited.value) {
+        updateTask()
+      }
+      router.push({name: 'project'})
     }
   }
 }
@@ -75,9 +84,10 @@ const updateTask = async () => {
       projectId: editTask.value.projectId,
     });
     getTask()
+    appStore.currentTaskId = taskId
     appStore.flash = '保存しました'
   } catch (error) {
-    console.error(error)
+    console.log(error)
   }
 }
 </script>
@@ -85,11 +95,11 @@ const updateTask = async () => {
   <PageHeader>
     <div class="flex items-center justify-between md:justify-start">
       <h3 class="text-lg flex items-center">
-        <router-link :to="{name: 'project'}" class="btn-sm btn-secondary mr-1"><i class="fa fa-chevron-left"></i></router-link>
+        <router-link :to="{name: 'project'}" class="btn bg-gray-200 mr-2"><i class="fa fa-chevron-left"></i></router-link>
         タスクの編集
       </h3>
-      <div class="ml-5">
-        <button :disabled="!isEdited" @click="updateTask" type="submit" class="btn-sm btn-primary"><i class="fa fa-save mr-1"></i>Save</button>
+      <div class="ml-6">
+        <button :disabled="!isEdited" @click="updateTask" type="submit" class="btn btn-primary"><i class="fa fa-save mr-1"></i>Save</button>
       </div>
     </div>
   </PageHeader>
@@ -129,12 +139,10 @@ const updateTask = async () => {
           </dd>
         </dl>
       </div>
-
       <div class="md:col-span-7 bg-white rounded-lg p-3">
         <h1 class="text-2xl mb-4 pb-4 py-1 border-b">{{ editTask.content }}</h1>
         <Markdown class="markdown-body" :source="editTask.description" />
       </div>
-
     </div>
   </div>
 </template>

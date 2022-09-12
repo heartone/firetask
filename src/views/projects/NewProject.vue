@@ -1,8 +1,9 @@
 <script setup>
 import { ref, reactive } from "vue"
-import{ db } from '@/FirebaseConfig.js'
-import {  collection, addDoc,  } from "firebase/firestore"
 import { useAppStore } from '@/stores/app.js'
+import { db } from '@/FirebaseConfig.js'
+import { collection, addDoc,  } from "firebase/firestore"
+
 const inputNewProjectName = ref(null)
 const appStore = useAppStore()
 const newProject = reactive({
@@ -17,7 +18,7 @@ const createProject = async () => {
     inputNewProjectName.value.focus()
     appStore.flash = 'プロジェクトを作成しました'
   } catch (error) {
-    console.error(error);
+    console.log(error);
   }
 }
 </script>

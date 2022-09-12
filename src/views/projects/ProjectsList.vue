@@ -1,12 +1,14 @@
 <script setup>
+import { computed } from 'vue'
+import { useAppStore } from '@/stores/app.js'
+import PageHeader from '@/components/PageHeader.vue'
 import NewProject from '@/views/projects/NewProject.vue'
 import ProjectProgress from '@/views/projects/ProjectProgress.vue'
 import Logout from '@/components/Logout.vue'
-import PageHeader from '@/components/PageHeader.vue'
-import { useAppStore } from '@/stores/app.js'
-import { computed } from 'vue'
-const appStore = useAppStore()
 
+const appStore = useAppStore()
+// タスク解除
+appStore.currentTaskId = null
 const progressCount = computed(() => {
   const count = {
     todo: appStore.projects.reduce((sum, p) => sum += (p.count?.todo || 0), 0),

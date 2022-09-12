@@ -14,7 +14,7 @@ const logout = async () => {
     await signOut(auth)
     router.push("/login")
   } catch(error) {
-    console.error(error)
+    console.log(error)
   } finally {
     isLoading.value = false
   }

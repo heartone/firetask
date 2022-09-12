@@ -1,5 +1,5 @@
 <script setup>
-import{ db } from '@/FirebaseConfig.js'
+import { db } from './FirebaseConfig.js'
 import { getAuth } from 'firebase/auth'
 import { onSnapshot, collection, getDocs, query ,where, orderBy } from "firebase/firestore"
 import { useAppStore } from '@/stores/app.js'
@@ -27,11 +27,13 @@ const getProjects = async () => {
       id: doc.id, ...doc.data()
     }))
   } catch (error) {
-    console.error(error)
+    console.log(error)
   }
 }
 // プロジェクトの変更を監視
 onSnapshot(collection(db, "projects"), () => getProjects());
+
+
 </script>
 
 <template>

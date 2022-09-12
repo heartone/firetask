@@ -3,8 +3,11 @@ import { ref, reactive } from "vue"
 import { db } from '@/FirebaseConfig.js'
 import { collection, addDoc,  } from "firebase/firestore"
 import { useAppStore } from '@/stores/app.js'
+
 const appStore = useAppStore()
-const inputNewTaskContent = ref(null)
+const inputNewTaskContent = ref(null) // input要素を参照
+
+// 新規タスクオブジェクト
 const newTask = reactive({
   content: '',
   description: '',
@@ -12,7 +15,7 @@ const newTask = reactive({
   priority: 'B',
   createdAt: null,
 })
-
+// タスクを追加する
 const createTask = async () => {
   try {
     const docRef = await addDoc(collection(db, "tasks"), {
@@ -23,9 +26,8 @@ const createTask = async () => {
     appStore.flash = 'タスクを追加しました'
     newTask.content = '' // 入力欄をクリア
     inputNewTaskContent.value.focus() // 入力欄にフォーカス
-
   } catch (error) {
-    console.error(error);
+    console.log(error);
   }
 }
 </script>

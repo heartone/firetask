@@ -1,11 +1,10 @@
 <script setup>
-import { watch, ref, computed, onMounted, onUnmounted } from "vue"
+import { ref, computed, onMounted, onUnmounted } from "vue"
 import { useRoute, useRouter } from 'vue-router'
-import{ db } from '@/FirebaseConfig.js'
-import { doc, collection, query, where, getDoc, getDocs, updateDoc, deleteDoc } from "firebase/firestore"
 import { useAppStore } from '@/stores/app.js'
+import { db } from '@/FirebaseConfig.js'
+import { doc, collection, query, where, getDoc, getDocs, updateDoc, deleteDoc } from "firebase/firestore"
 import '@/assets/github-markdown-css.css'
-// import '@/assets/highlightjs.css'
 import 'highlight.js/styles/monokai.css';
 import PageHeader from '@/components/PageHeader.vue'
 import Markdown from 'vue3-markdown-it'
@@ -20,20 +19,23 @@ const originProject = ref({})
 if (!appStore.currentProjectId) {
   appStore.currentProjectId = projectId
 }
+appStore.currentTaskId = null
+
 // プロジェクト取得
 const getProject = async () => {
   try {
     const docSnap = await getDoc(doc(db, "projects", projectId));
     editProject.value = docSnap.data()
     originProject.value = docSnap.data()
-
   } catch (error) {
-    console.error(error)
+    console.log(error)
   }
 }
+
 // プロジェクト読み込み
 onMounted(getProject())
 
+// プロジェクト変更監視
 const isEdited = computed(() => {
   return (
     editProject.value.name != originProject.value.name
@@ -44,19 +46,25 @@ const isEdited = computed(() => {
   )
 })
 
-// ショートカットキーによる保存
+// ショートカットキー登録
 onMounted(() => {
   document.addEventListener('keydown', saveByShortcutKey)
 })
 onUnmounted(() => {
   document.removeEventListener('keydown', saveByShortcutKey)
 })
+// ショートカットキー実行
 const saveByShortcutKey = (event) => {
   if (event.ctrlKey || event.metaKey){
     if (event.key == 's') {
       event.preventDefault()
-      // 保存
       updateProject()
+    } else if (event.key == 'Enter') {
+      event.preventDefault()
+      if (isEdited.value) {
+        updateProject()
+      }
+      router.push({name: "project"})
     }
   }
 }
@@ -96,11 +104,11 @@ const deleteProject = async () => {
   <PageHeader>
     <div class="flex justify-between md:justify-start items-center">
       <h3 class="text-lg flex items-center">
-        <router-link :to="{name: 'project'}" class="btn-sm btn-secondary mr-1"><i class="fa fa-chevron-left"></i></router-link>
+        <router-link :to="{name: 'project'}" class="btn bg-gray-200 mr-2"><i class="fa fa-chevron-left"></i></router-link>
         プロジェクトの編集
       </h3>
-      <div class="ml-5">
-        <button :disabled="!isEdited" @click="updateProject" type="submit" class="btn-sm btn-primary"><i class="fa fa-save mr-1"></i>Save</button>
+      <div class="ml-6">
+        <button :disabled="!isEdited" @click="updateProject" type="submit" class="btn btn-primary"><i class="fa fa-save mr-1"></i>Save</button>
       </div>
     </div>
 

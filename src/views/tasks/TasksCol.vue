@@ -1,18 +1,23 @@
 <script setup>
+import { ref, computed } from 'vue'
+import { useAppStore } from '@/stores/app.js'
+import { db } from '@/FirebaseConfig.js'
+import { deleteDoc, doc } from "firebase/firestore"
 import TaskCard from '@/views/tasks/TaskCard.vue'
 import Modal from '@/components/Modal.vue'
 import Dropdown from '@/components/Dropdown.vue'
-import { ref, computed } from 'vue'
-import{ db } from '@/FirebaseConfig.js'
-import {  deleteDoc, doc } from "firebase/firestore"
-import { useAppStore } from '@/stores/app.js'
-const appStore = useAppStore()
+
 const props = defineProps(['status', 'tasks'])
-const showModal = ref(false)
+const appStore = useAppStore()
+const showModal = ref(false) // モーダル表示判定用
+
+// タスク削除イベント発行
 const emits = defineEmits(['onDeleteTask'])
 const onDeleteTask = (taskId) => {
   emits('onDeleteTask', taskId)
 }
+
+// ステータス別表示文字列
 const statusText = computed(() => {
   return {todo: '未実施', doing: '実行中', done: '完了'}[props.status]
 })
@@ -28,8 +33,8 @@ const deleteTasks = async () => {
 </script>
 
 <template>
-  <div class="bg-gray-200 px-3 pt-4 pb-1 rounded-lg h-full">
-    <div class="mb-3 px-2 flex justify-between items-center text-lg">
+  <div class="bg-gray-200 px-3 pt-3 pb-1 rounded-lg h-full">
+    <div class="mb-2 px-2 flex justify-between items-center text-lg">
       <div>{{ tasks.length || 'No'}} {{ status }}{{ tasks.length != 1 ? 's' : ''}}</div>
       <Dropdown v-show="tasks.length">
         <template #trigger>

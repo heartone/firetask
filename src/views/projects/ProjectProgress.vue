@@ -1,8 +1,8 @@
 <script setup>
-import Progress from '@/components/Progress.vue'
 import { computed } from 'vue'
-const props = defineProps(['count'])
+import Progress from '@/components/Progress.vue'
 
+const props = defineProps(['count'])
 const value = computed (() => {
   const todoCount =  parseInt(props.count?.todo || 0)
   const doingCount =  parseInt(props.count?.doing || 0)

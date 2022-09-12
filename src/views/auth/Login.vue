@@ -27,7 +27,7 @@ const loginGoogle = async () => {
     router.push("/");
   }).catch((error) => {
       isLoading.value = false;
-      console.error(error);
+      console.log(error);
       errMsg.value = "There was a problem loggin in";
     });
 };
