@@ -14,16 +14,16 @@ const appStore = useAppStore()
 auth.onAuthStateChanged(user => {
   appStore.currentUser = user
   if (!user) return
-  const projectsRef = collection(db, "users", user?.uid, "projects")
+  const projectsRef = collection(db, "users", user.uid, "projects")
   // プロジェクトの変更を監視
-  onSnapshot(projectsRef, async () => {
+  onSnapshot(projectsRef, async() => {
     const snapshot = await getDocs(
       query(projectsRef, orderBy("priority", "desc"))
     )
     appStore.projects = snapshot.docs.map(doc => ({
       id: doc.id, ...doc.data()
     }))
-  });
+  })
 })
 
 </script>

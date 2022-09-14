@@ -85,6 +85,7 @@ const updateTask = async () => {
       content: editTask.value.content,
       description: editTask.value.description,
       status: editTask.value.status,
+      priority: editTask.value.priority,
       // projectId: editTask.value.projectId,
     });
     getTask()
