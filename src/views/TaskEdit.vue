@@ -1,6 +1,7 @@
 <script setup>
 import { computed, ref, onMounted, onUnmounted } from "vue"
 import { useRoute, useRouter } from 'vue-router'
+import { getAuth } from 'firebase/auth'
 import { useAppStore } from '@/stores/app.js'
 import { db } from '@/FirebaseConfig.js'
 import { doc, getDoc, updateDoc } from "firebase/firestore"
@@ -22,18 +23,23 @@ appStore.currentTaskId = null
 const editTask = ref({})
 const originTask = ref({})
 
+// ログインを監視
+const auth = getAuth()
+auth.onAuthStateChanged(user => {
+  appStore.currentUser = user
+  if (!user) return
+  getTask()
+})
 // タスク取得
 const getTask = async () => {
   try {
-    const docSnap = await getDoc(doc(db, "tasks", taskId));
+    const docSnap = await getDoc(doc(db, "users", appStore.currentUser.uid, "projects", projectId, "tasks", taskId));
     editTask.value = docSnap.data()
     originTask.value = docSnap.data()
   } catch (error) {
     console.log(error);
   }
 }
-// タスク読み込み
-onMounted(getTask())
 
 // タスクの変更監視
 const isEdited = computed(() => {
@@ -45,8 +51,6 @@ const isEdited = computed(() => {
     editTask.value.priority != originTask.value.priority
     ||
     editTask.value.description != originTask.value.description
-    ||
-    editTask.value.projectId != originTask.value.projectId
   )
 })
 
@@ -77,11 +81,11 @@ const saveByShortcutKey = (event) => {
 // タスク編集
 const updateTask = async () => {
   try {
-    await updateDoc(doc(db, "tasks", taskId), {
+    await updateDoc(doc(db, "users", appStore.currentUser.uid, "projects", projectId, "tasks", taskId), {
       content: editTask.value.content,
       description: editTask.value.description,
       status: editTask.value.status,
-      projectId: editTask.value.projectId,
+      // projectId: editTask.value.projectId,
     });
     getTask()
     appStore.currentTaskId = taskId
@@ -129,14 +133,7 @@ const updateTask = async () => {
             <textarea v-model="editTask.description" class="form-control w-full text-sm" rows="7"></textarea>
             <div class="mt-3 hidden md:block text-sm text-gray-500">ctrl + s または command + s で保存</div>
           </dd>
-          <dt>プロジェクトを変更</dt>
-          <dd>
-            <select v-model="editTask.projectId" class="form-control">
-              <template v-for="project in appStore.projects" :key="project.id">
-                <option :value="project.id">{{ project.name }}</option>
-              </template>
-            </select>
-          </dd>
+
         </dl>
       </div>
       <div class="md:col-span-7 bg-white rounded-lg p-3">

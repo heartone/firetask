@@ -21,7 +21,7 @@ const login = async () => {
   }
 };
 const loginGoogle = async () => {
-  return false // Googleログイン無効
+  // return false // Googleログイン無効
   const provider = new GoogleAuthProvider();
   signInWithPopup(auth, provider).then(() => {
     router.push("/");
@@ -36,23 +36,27 @@ const loginGoogle = async () => {
 <template>
   <div class="container-fluid py-4">
 
-  <form @submit.prevent="login">
+    <form @submit.prevent="login">
 
-    <div class="mb-3">
-      <input type="email" class="form-control" v-model="email" placeholder="Email" />
-    </div>
-    <div class="mb-3">
-      <input type="password" class="form-control" v-model="password" placeholder="Password" />
-    </div>
-    <div class="mb-3">
-      <div class="text-sm text-red-700" v-if="errMsg" role="alert">
-        {{ errMsg }}
+      <div class="mb-3">
+        <input type="email" class="form-control" v-model="email" placeholder="Email" />
       </div>
+      <div class="mb-3">
+        <input type="password" class="form-control" v-model="password" placeholder="Password" />
+      </div>
+      <div class="mb-3">
+        <div class="text-sm text-red-700" v-if="errMsg" role="alert">
+          {{ errMsg }}
+        </div>
+      </div>
+      <div class="mb-3">
+        <button type="submit" :disabled="isLoading" class="btn btn-primary">Login</button>
+      </div>
+    </form>
+    <hr class="mt-5">
+    <div class="mt-5">
+      <button @click="loginGoogle" class="btn bg-yellow-400">Googleでログイン</button>
     </div>
-    <div class="mb-3">
-      <button type="submit" :disabled="isLoading" class="btn btn-primary">Login</button>
-    </div>
-  </form>
   </div>
 </template>
 

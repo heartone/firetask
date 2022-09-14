@@ -1,10 +1,14 @@
 <script setup>
 import { ref, reactive } from "vue"
+import { useRoute } from 'vue-router'
+
 import { db } from '@/FirebaseConfig.js'
 import { collection, addDoc,  } from "firebase/firestore"
 import { useAppStore } from '@/stores/app.js'
 
 const appStore = useAppStore()
+const uid = appStore.currentUser.uid
+const projectId = useRoute().params.projectId
 const inputNewTaskContent = ref(null) // input要素を参照
 
 // 新規タスクオブジェクト
@@ -18,9 +22,9 @@ const newTask = reactive({
 // タスクを追加する
 const createTask = async () => {
   try {
-    const docRef = await addDoc(collection(db, "tasks"), {
+    const taskRef = collection(db, "users", uid, "projects", projectId, "tasks")
+    await addDoc(taskRef, {
       ...newTask,
-      projectId: appStore.currentProject.id,
       createdAt: new Date()
     })
     appStore.flash = 'タスクを追加しました'

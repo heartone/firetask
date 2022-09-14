@@ -1,4 +1,5 @@
 <script setup>
+import { ref, onMounted } from 'vue'
 import { db } from './FirebaseConfig.js'
 import { getAuth } from 'firebase/auth'
 import { onSnapshot, collection, getDocs, query ,where, orderBy } from "firebase/firestore"
@@ -8,31 +9,22 @@ import TopHeader from '@/components/TopHeader.vue'
 import Flash from '@/components/Flash.vue'
 const auth = getAuth()
 const appStore = useAppStore()
+
 // ログインを監視
 auth.onAuthStateChanged(user => {
   appStore.currentUser = user
-  if (user) getProjects()
-})
-// プロジェクト一覧をセット
-const getProjects = async () => {
-  if (!appStore.currentUser) return
-  try {
-    const projectsRef = collection(db, "projects")
-    const querySnapshot = await getDocs(
-      query(
-        projectsRef, where('uid', '==', appStore.currentUser.uid), orderBy("priority", "desc")
-      )
+  if (!user) return
+  const projectsRef = collection(db, "users", user?.uid, "projects")
+  // プロジェクトの変更を監視
+  onSnapshot(projectsRef, async () => {
+    const snapshot = await getDocs(
+      query(projectsRef, orderBy("priority", "desc"))
     )
-    appStore.projects = querySnapshot.docs.map(doc => ({
+    appStore.projects = snapshot.docs.map(doc => ({
       id: doc.id, ...doc.data()
     }))
-  } catch (error) {
-    console.log(error)
-  }
-}
-// プロジェクトの変更を監視
-onSnapshot(collection(db, "projects"), () => getProjects());
-
+  });
+})
 
 </script>
 
@@ -41,7 +33,6 @@ onSnapshot(collection(db, "projects"), () => getProjects());
     <Flash />
     <TopHeader />
     <main class="flex-grow">
-      <!-- <SideBar /> -->
       <RouterView />
     </main>
     <footer class="py-5 flex justify-center text-xs text-gray-500">&copy; 有限会社ハートワン</footer>

@@ -24,7 +24,7 @@ appStore.currentTaskId = null
 // プロジェクト取得
 const getProject = async () => {
   try {
-    const docSnap = await getDoc(doc(db, "projects", projectId));
+    const docSnap = await getDoc(doc(db, "users", appStore.currentUser.uid, "projects", projectId));
     editProject.value = docSnap.data()
     originProject.value = docSnap.data()
   } catch (error) {
@@ -70,7 +70,7 @@ const saveByShortcutKey = (event) => {
 }
 // プロジェクト編集
 const updateProject = async () => {
-  await updateDoc(doc(db, "projects", projectId), {
+  await updateDoc(doc(db, "users", appStore.currentUser.uid, "projects", projectId), {
     name: editProject.value.name || '',
     priority: parseInt(editProject.value.priority) || 0,
     description: editProject.value.description || '',
@@ -83,17 +83,14 @@ const updateProject = async () => {
 const showModal = ref(false)
 const deleteProject = async () => {
   // 関連タスクを削除
-  const tasksRef = collection(db, "tasks")
-  const querySnapshot = await getDocs(
-    query(
-      tasksRef, where("projectId", "==", projectId)
-    )
-  )
+  const tasksRef = collection(db, "users", appStore.currentUser.uid, "projects", projectId, "tasks")
+  const querySnapshot = await getDocs(tasksRef)
   querySnapshot.docs.map(task => {
      deleteDoc(doc(db, "tasks", task.id))
   })
   // プロジェクトを削除
-  await deleteDoc(doc(db, "projects", projectId))
+  await deleteDoc(doc(db, "users", appStore.currentUser.uid, "projects", projectId))
+  appStore.currentProjectId = null
   router.push({name: 'home'})
   appStore.flash = 'プロジェクトを削除しました'
 

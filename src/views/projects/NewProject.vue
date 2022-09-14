@@ -2,18 +2,20 @@
 import { ref, reactive } from "vue"
 import { useAppStore } from '@/stores/app.js'
 import { db } from '@/FirebaseConfig.js'
-import { collection, addDoc,  } from "firebase/firestore"
+import { collection, addDoc, doc } from "firebase/firestore"
 
 const inputNewProjectName = ref(null)
 const appStore = useAppStore()
 const newProject = reactive({
   name: '',
-  uid: appStore.currentUser.uid,
   priority: 0
 })
+const uid = appStore.currentUser.uid
+
 const createProject = async () => {
   try {
-    const docRef = await addDoc(collection(db, "projects"), newProject);
+    const projectRef = collection(db, "users", uid, "projects")
+    await addDoc(projectRef, newProject)
     newProject.name = ''
     inputNewProjectName.value.focus()
     appStore.flash = 'プロジェクトを作成しました'

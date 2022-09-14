@@ -25,7 +25,7 @@ const statusText = computed(() => {
 // タスク一括削除
 const deleteTasks = async () => {
   await props.tasks.map(task => {
-      deleteDoc(doc(db, "tasks", task.id))
+      deleteDoc(doc(db, "users", appStore.currentUser.uid, "projects", appStore.currentProjectId, "tasks", task.id))
   })
   showModal.value = false
   appStore.flash = props.tasks.length + ' 件のタスクを削除しました'

@@ -15,31 +15,31 @@ const router = createRouter({
     {
       path: '/',
       name: 'home',
-      component: () => import('@/views/projects/ProjectsList.vue'),
+      component: () => import('@/views/ProjectsList.vue'),
       beforeEnter: requireAuth,
     },
     {
       path: '/projects/:projectId',
       name: 'project',
-      component: () => import('@/views/tasks/TasksList.vue'),
+      component: () => import('@/views/TasksList.vue'),
       beforeEnter: requireAuth
     },
     {
       path: '/projects/:projectId/edit',
       name: 'projectEdit',
-      component: () => import('@/views/projects/ProjectEdit.vue'),
+      component: () => import('@/views/ProjectEdit.vue'),
       beforeEnter: requireAuth
     },
     {
       path: '/projects/:projectId/tasks/:taskId/edit',
       name: 'task',
-      component: () => import('@/views/tasks/TaskEdit.vue'),
+      component: () => import('@/views/TaskEdit.vue'),
       beforeEnter: requireAuth
     },
     {
       path: '/login',
       name: 'login',
-      component: () => import('@/views/auth/Login.vue')
+      component: () => import('@/views/Login.vue')
     }
   ]
 })
