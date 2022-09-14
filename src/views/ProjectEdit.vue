@@ -84,8 +84,8 @@ const showModal = ref(false)
 const deleteProject = async () => {
   // 関連タスクを削除
   const tasksRef = collection(db, "users", appStore.currentUser.uid, "projects", projectId, "tasks")
-  const querySnapshot = await getDocs(tasksRef)
-  querySnapshot.docs.map(task => {
+  const snapshot = await getDocs(tasksRef)
+  snapshot.docs.map(task => {
      deleteDoc(doc(db, "tasks", task.id))
   })
   // プロジェクトを削除
