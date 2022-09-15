@@ -4,7 +4,7 @@ import { useRoute, useRouter } from 'vue-router'
 import { getAuth } from 'firebase/auth'
 import { useAppStore } from '@/stores/app.js'
 import { db } from '@/FirebaseConfig.js'
-import { doc, getDoc, updateDoc } from "firebase/firestore"
+import { doc, getDoc, updateDoc, collection, addDoc, deleteDoc } from "firebase/firestore"
 import Markdown from 'vue3-markdown-it'
 import PageHeader from '@/components/PageHeader.vue'
 import ElasticTextArea from '@/components/ElasticTextArea.vue'
@@ -17,7 +17,10 @@ const appStore = useAppStore()
 const route = useRoute()
 const router = useRouter()
 const projectId = route.params.projectId
+const editProjectId = ref(null)
+editProjectId.value = projectId
 appStore.currentProjectId = projectId
+
 // 現在のタスク
 const taskId = route.params.taskId
 appStore.currentTaskId = null
@@ -40,6 +43,7 @@ const getTask = async () => {
     const docSnap = await getDoc(doc(db, "users", appStore.currentUser.uid, "projects", projectId, "tasks", taskId));
     editTask.value = docSnap.data()
     originTask.value = docSnap.data()
+    console.log(docSnap.data())
   } catch (error) {
     console.log(error);
   }
@@ -92,6 +96,22 @@ const updateTask = async () => {
     console.log(error)
   }
 }
+
+// プロジェクト変更
+const changeProject = async () => {
+  try {
+    const taskRef = collection(db, "users", appStore.currentUser.uid, "projects", editProjectId.value, "tasks")
+    await addDoc(taskRef, {
+      ...editTask.value,
+      createdAt: new Date()
+    })
+    appStore.flash = 'プロジェクトを変更しました'
+    await deleteDoc(doc(db, "users", appStore.currentUser.uid, "projects", projectId, "tasks", taskId))
+    router.push("/projects/" + editProjectId.value)
+  } catch (error) {
+    console.log(error);
+  }
+}
 </script>
 <template>
   <PageHeader>
@@ -128,16 +148,30 @@ const updateTask = async () => {
           </dd>
           <dt>メモ</dt>
           <dd>
-            <ElasticTextArea v-model="editTask.description" class="form-control w-full text-sm" rows="7"></ElasticTextArea>
+            <ElasticTextArea v-model="editTask.description" class="form-control w-full text-sm" rows="4"></ElasticTextArea>
             <div class="mt-3 hidden md:block text-sm text-gray-500">ctrl + s または command + s で保存</div>
           </dd>
-
         </dl>
       </div>
       <div class="md:col-span-7 bg-white rounded-lg p-3">
         <h1 class="text-2xl mb-4 pb-4 py-1 border-b">{{ editTask.content }}</h1>
         <Markdown ref="markdown" class="markdown-body" :source="editTask.description" />
       </div>
+    </div>
+    <div class="my-5 pt-3 border-t">
+      <dl class="form-list">
+        <dt>プロジェクト移動</dt>
+        <dd>
+          <form @submit.prevent="changeProject" class="flex items-center">
+            <select v-model="editProjectId" class="form-control-sm">
+              <template v-for="project in appStore.projects" :key="project.id">
+                <option :value="project.id">{{ project.name }}</option>
+              </template>
+            </select>
+            <button type="submit" class="btn-sm btn-success ml-1">移動</button>
+          </form>
+        </dd>
+      </dl>
     </div>
   </div>
 </template>

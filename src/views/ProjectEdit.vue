@@ -127,7 +127,7 @@ const deleteProject = async () => {
 
       <div class="md:col-span-7 bg-white rounded-lg p-3 overflow-y-auto">
         <h1 class="text-2xl mb-4 pb-4 py-1 border-b">{{ editProject.name }}</h1>
-        <Markdown class="markdown-body" :source="editProject.description" />
+        <Markdown class="markdown-body" :source="editProject.description" rows="4" />
       </div>
     </div>
     <hr class="mt-6">

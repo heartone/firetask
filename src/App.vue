@@ -29,6 +29,7 @@ auth.onAuthStateChanged(user => {
       }))
 
     } catch(e) {
+      appStore.error = e.messge
       console.log(e)
     } finally {
       isLoading.value = false
