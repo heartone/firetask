@@ -16,7 +16,7 @@ const projectId = useRoute().params.projectId
 appStore.currentProjectId = projectId
 // タスク一覧
 const tasks = ref([])
-
+const isLoading = ref(false)
 // ログインを監視
 auth.onAuthStateChanged(user => {
   appStore.currentUser = user
@@ -24,12 +24,14 @@ auth.onAuthStateChanged(user => {
   const tasksRef = collection(db, "users", user?.uid, "projects", projectId, "tasks")
   // 変更を監視
   onSnapshot(tasksRef, async () => {
+    isLoading.value = true
     const snapshot = await getDocs(
       query(tasksRef, orderBy("priority", "asc"))
     )
     tasks.value = snapshot.docs.map(doc => ({
       id: doc.id, ...doc.data()
     }))
+    isLoading.value = false
   })
 })
 // ステータス集計
@@ -88,7 +90,7 @@ const deleteTask = async () => {
   <div class="container-fluid py-3 overflow-x-auto">
     <div class="tasksCols grid grid-cols-3 gap-4">
       <template v-for="status in ['todo', 'doing', 'done']" :key="status">
-        <TasksCol @onDeleteTask="onDeleteTask" :status="status" :tasks="tasks.filter(task => task.status == status)" />
+        <TasksCol @onDeleteTask="onDeleteTask" :isLoading="isLoading" :status="status" :tasks="tasks.filter(task => task.status == status)" />
       </template>
     </div>
   </div>

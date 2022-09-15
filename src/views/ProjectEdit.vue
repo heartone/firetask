@@ -9,6 +9,7 @@ import 'highlight.js/styles/monokai.css';
 import PageHeader from '@/components/PageHeader.vue'
 import Markdown from 'vue3-markdown-it'
 import Modal from '@/components/Modal.vue'
+import ElasticTextArea from '@/components/ElasticTextArea.vue'
 
 const appStore = useAppStore()
 const route = useRoute()
@@ -37,13 +38,8 @@ onMounted(getProject())
 
 // プロジェクト変更監視
 const isEdited = computed(() => {
-  return (
-    editProject.value.name != originProject.value.name
-    ||
-    editProject.value.priority != originProject.value.priority
-    ||
-    editProject.value.description != originProject.value.description
-  )
+  // 指定の属性のうち一つでも変更があればtrueを返す
+  return ["name", "priority", "description"].map((attr) => editProject.value[attr] != originProject.value[attr]).includes(true)
 })
 
 // ショートカットキー登録
@@ -113,7 +109,7 @@ const deleteProject = async () => {
   <div class="container-fluid py-3">
     <div class="md:grid sm:grid-cols-12 gap-5">
       <div class="md:col-span-5 mb-5">
-        <dl class="form-list">
+        <dl class="form-list sticky top-0">
           <dt>プロジェクト名</dt>
           <dd><input type="text" v-model="editProject.name" class="form-control w-full" placeholder="プロジェクト名を入力" autofocus></dd>
           <dt>優先度</dt>
@@ -123,10 +119,10 @@ const deleteProject = async () => {
           </dd>
           <dt>メモ</dt>
           <dd>
-            <textarea @keydown="save" v-model="editProject.description" class="form-control w-full text-sm" rows="10"></textarea>
+            <ElasticTextArea v-model="editProject.description" class="form-control w-full text-sm" rows="4"></ElasticTextArea>
+            <div class="mt-6 hidden md:block text-sm text-gray-500">ctrl + s または command + s で保存</div>
           </dd>
         </dl>
-        <div class="hidden md:block text-sm text-gray-500">ctrl + s または command + s で保存</div>
       </div>
 
       <div class="md:col-span-7 bg-white rounded-lg p-3 overflow-y-auto">

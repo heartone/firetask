@@ -7,6 +7,7 @@ import { db } from '@/FirebaseConfig.js'
 import { doc, getDoc, updateDoc } from "firebase/firestore"
 import Markdown from 'vue3-markdown-it'
 import PageHeader from '@/components/PageHeader.vue'
+import ElasticTextArea from '@/components/ElasticTextArea.vue'
 import '@/assets/github-markdown-css.css'
 import 'highlight.js/styles/monokai.css';
 
@@ -22,6 +23,9 @@ const taskId = route.params.taskId
 appStore.currentTaskId = null
 const editTask = ref({})
 const originTask = ref({})
+
+// マークダウン部を参照
+const markdown = ref()
 
 // ログインを監視
 const auth = getAuth()
@@ -43,15 +47,8 @@ const getTask = async () => {
 
 // タスクの変更監視
 const isEdited = computed(() => {
-  return (
-    editTask.value.content != originTask.value.content
-    ||
-    editTask.value.status != originTask.value.status
-    ||
-    editTask.value.priority != originTask.value.priority
-    ||
-    editTask.value.description != originTask.value.description
-  )
+  // 指定の属性のうち一つでも変更があればtrueを返す
+  return ["content", "status", "priority", "description"].map((attr) => editTask.value[attr] != originTask.value[attr]).includes(true)
 })
 
 // ショートカットキー登録
@@ -111,7 +108,7 @@ const updateTask = async () => {
   <div class="container-fluid py-3">
     <div class="md:grid sm:grid-cols-12 gap-5">
       <div class="md:col-span-5 mb-5">
-        <dl class="form-list">
+        <dl class="form-list sticky top-0">
           <dt>タスク内容</dt>
           <dd><input type="text" v-model="editTask.content" class="form-control w-full" placeholder="タスク内容を入力"></dd>
           <dt>ステータスと優先度</dt>
@@ -131,7 +128,7 @@ const updateTask = async () => {
           </dd>
           <dt>メモ</dt>
           <dd>
-            <textarea v-model="editTask.description" class="form-control w-full text-sm" rows="7"></textarea>
+            <ElasticTextArea v-model="editTask.description" class="form-control w-full text-sm" rows="7"></ElasticTextArea>
             <div class="mt-3 hidden md:block text-sm text-gray-500">ctrl + s または command + s で保存</div>
           </dd>
 
@@ -139,7 +136,7 @@ const updateTask = async () => {
       </div>
       <div class="md:col-span-7 bg-white rounded-lg p-3">
         <h1 class="text-2xl mb-4 pb-4 py-1 border-b">{{ editTask.content }}</h1>
-        <Markdown class="markdown-body" :source="editTask.description" />
+        <Markdown ref="markdown" class="markdown-body" :source="editTask.description" />
       </div>
     </div>
   </div>

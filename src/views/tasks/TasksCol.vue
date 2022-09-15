@@ -7,10 +7,9 @@ import TaskCard from '@/views/tasks/TaskCard.vue'
 import Modal from '@/components/Modal.vue'
 import Dropdown from '@/components/Dropdown.vue'
 
-const props = defineProps(['status', 'tasks'])
+const props = defineProps(['status', 'tasks', 'isLoading'])
 const appStore = useAppStore()
 const showModal = ref(false) // モーダル表示判定用
-
 // タスク削除イベント発行
 const emits = defineEmits(['onDeleteTask'])
 const onDeleteTask = (taskId) => {
@@ -44,6 +43,7 @@ const deleteTasks = async () => {
           <button class="dropdown-link" @click="showModal=true">{{statusText}}のタスクを削除</button>
         </template>
       </Dropdown>
+      <div v-show="isLoading && !tasks.length"><i class="fa fa-circle-notch text-blue-400 fa-spin text-xl"></i></div>
     </div>
     <div v-for="task in tasks" :key="task.id">
       <TaskCard :task="task" @onDeleteTask="onDeleteTask" />
