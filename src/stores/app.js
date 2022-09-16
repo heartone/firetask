@@ -10,6 +10,7 @@ export const useAppStore = defineStore('app', {
     flash: ref('')
   }),
   getters: {
+    uid: (state) => state.currentUser.uid,
     currentProject: (state) => state.projects.find((p) => p.id == state.currentProjectId)
   },
   actions: {

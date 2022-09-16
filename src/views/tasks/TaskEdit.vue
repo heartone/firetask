@@ -10,15 +10,15 @@ import '@/assets/github-markdown-css.css'
 import 'highlight.js/styles/monokai.css';
 
 // 状態管理
-const appStore = useAppStore()
+const store = useAppStore()
 // 現在のプロジェクト
 const route = useRoute()
 const router = useRouter()
 const projectId = route.params.projectId
-appStore.currentProjectId = projectId
+store.currentProjectId = projectId
 // 現在のタスク
 const taskId = route.params.taskId
-appStore.currentTaskId = null
+store.currentTaskId = null
 const editTask = ref({})
 const originTask = ref({})
 
@@ -84,8 +84,8 @@ const updateTask = async () => {
       projectId: editTask.value.projectId,
     });
     getTask()
-    appStore.currentTaskId = taskId
-    appStore.flash = '保存しました'
+    store.currentTaskId = taskId
+    store.flash = '保存しました'
   } catch (error) {
     console.log(error)
   }
@@ -132,7 +132,7 @@ const updateTask = async () => {
           <dt>プロジェクトを変更</dt>
           <dd>
             <select v-model="editTask.projectId" class="form-control">
-              <template v-for="project in appStore.projects" :key="project.id">
+              <template v-for="project in store.projects" :key="project.id">
                 <option :value="project.id">{{ project.name }}</option>
               </template>
             </select>

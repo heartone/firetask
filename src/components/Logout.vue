@@ -6,7 +6,7 @@ import { useRouter } from "vue-router"
 
 const router = useRouter()
 const auth = getAuth()
-const appStore = useAppStore()
+const store = useAppStore()
 const isLoading = ref(false)
 const logout = async () => {
   isLoading.value = true
@@ -21,7 +21,7 @@ const logout = async () => {
 }
 </script>
 <template>
-  <div v-if="appStore.currentUser">
+  <div v-if="store.currentUser">
     <button class="btn-sm" @click="logout()"><i class="fa fa-sign-out-alt"></i> ログアウト</button>
   </div>
 </template>

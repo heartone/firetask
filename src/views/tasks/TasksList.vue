@@ -1,6 +1,6 @@
 <script setup>
 import { ref, computed, watch } from "vue"
-import { useRoute, useRouter } from 'vue-router'
+import { useRoute } from 'vue-router'
 import { useAppStore } from '@/stores/app.js'
 import { db } from '@/FirebaseConfig.js'
 import { onSnapshot, collection, getDocs, query, where, orderBy, updateDoc, deleteDoc, doc } from "firebase/firestore"
@@ -9,14 +9,15 @@ import TasksCol from '@/views/tasks/TasksCol.vue'
 import Modal from '@/components/Modal.vue'
 
 const showModal = ref(false)
-const appStore = useAppStore()
+const store = useAppStore()
 const projectId = useRoute().params.projectId
-appStore.currentProjectId = projectId
+store.currentProjectId = projectId
 
 // タスク一覧
 const tasks = ref([])
 // タスクcollection参照
-const tasksRef = collection(db, "tasks")
+console.log(store.uid, store.projectId)
+const tasksRef = collection(db, "users", store.uid, "projects", projectId, "tasks")
 
 // ステータス集計
 const progressCount = computed(() => {
@@ -32,7 +33,7 @@ const getTasks = async () => {
   try {
     const querySnapshot = await getDocs(
       query(
-        tasksRef, where("projectId", "==", projectId), orderBy("priority", "asc")//, orderBy("createdAt", "desc")
+        tasksRef, orderBy("priority", "asc")//, orderBy("createdAt", "desc")
       )
     )
     tasks.value = querySnapshot.docs.map(doc => ({
@@ -48,7 +49,7 @@ onSnapshot(tasksRef,  () => getTasks())
 watch(progressCount, (newValue, oldValue) => {
   // 変更がなければ更新しない
   if (
-    JSON.stringify(Object.entries(appStore.currentProject.count || {}).sort())
+    JSON.stringify(Object.entries(store.currentProject.count || {}).sort())
     ==
     JSON.stringify(Object.entries(progressCount.value).sort())
   ) return
@@ -57,7 +58,7 @@ watch(progressCount, (newValue, oldValue) => {
     updateDoc(doc(db, "projects", projectId), {
       count: newValue
     });
-    appStore.currentProject.count = progressCount.value
+    store.currentProject.count = progressCount.value
   } catch (error) {
     console.log(error)
   }
@@ -73,7 +74,7 @@ const onDeleteTask = (taskId) => {
 const deleteTask = async () => {
   try {
     await deleteDoc(doc(db, "tasks", deleteTaskId.value))
-    appStore.flash = 'タスクを削除しました'
+    store.flash = 'タスクを削除しました'
     showModal.value = false
   } catch (error) {
     console.log(error)

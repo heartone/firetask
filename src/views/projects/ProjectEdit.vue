@@ -10,16 +10,16 @@ import PageHeader from '@/components/PageHeader.vue'
 import Markdown from 'vue3-markdown-it'
 import Modal from '@/components/Modal.vue'
 
-const appStore = useAppStore()
+const store = useAppStore()
 const route = useRoute()
 const router = useRouter()
 const projectId = route.params.projectId
 const editProject = ref({})
 const originProject = ref({})
-if (!appStore.currentProjectId) {
-  appStore.currentProjectId = projectId
+if (!store.currentProjectId) {
+  store.currentProjectId = projectId
 }
-appStore.currentTaskId = null
+store.currentTaskId = null
 
 // プロジェクト取得
 const getProject = async () => {
@@ -76,7 +76,7 @@ const updateProject = async () => {
     description: editProject.value.description || '',
   });
   getProject()
-  appStore.flash = '保存しました'
+  store.flash = '保存しました'
 
 }
 // プロジェクト削除
@@ -95,7 +95,7 @@ const deleteProject = async () => {
   // プロジェクトを削除
   await deleteDoc(doc(db, "projects", projectId))
   router.push({name: 'home'})
-  appStore.flash = 'プロジェクトを削除しました'
+  store.flash = 'プロジェクトを削除しました'
 
 }
 

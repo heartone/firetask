@@ -8,9 +8,9 @@ import TaskHeader from '@/views/tasks/TaskHeader.vue'
 import TasksList from '@/views/tasks/TasksList.vue'
 
 const route = useRoute()
-const appStore = useAppStore()
+const store = useAppStore()
 const projectId = route.params.projectId
-appStore.currentProjectId = projectId
+store.currentProjectId = projectId
 </script>
 <template>
   <TaskHeader />

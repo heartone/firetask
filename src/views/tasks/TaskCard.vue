@@ -5,7 +5,7 @@ import { doc, updateDoc } from "firebase/firestore"
 import { useAppStore } from '@/stores/app.js'
 import Dropdown from '@/components/Dropdown.vue'
 
-const appStore = useAppStore()
+const store = useAppStore()
 const props = defineProps(['task'])
 // タスク削除アクションを発行
 const emits = defineEmits(['onDeleteTask'])
@@ -26,13 +26,13 @@ const updatePriority = (priority) => updateTask({priority: priority})
 // タスクを更新する
 const updateTask = async (field) => {
   await updateDoc(doc(db, "tasks", props.task.id), field)
-  appStore.flash = {status: 'ステータス', priority: '優先度'}[Object.keys(field)[0]] + 'を変更しました'
-  appStore.currentTaskId = props.task.id
+  store.flash = {status: 'ステータス', priority: '優先度'}[Object.keys(field)[0]] + 'を変更しました'
+  store.currentTaskId = props.task.id
 }
 </script>
 
 <template>
-  <div class="p-2 mb-3 bg-white shadow-lg rounded" :class="{'bg-yellow-100': appStore.currentTaskId == task.id}">
+  <div class="p-2 mb-3 bg-white shadow-lg rounded" :class="{'bg-yellow-100': store.currentTaskId == task.id}">
     <div class="flex">
       <Dropdown align="left" width="24">
         <template #trigger>
