@@ -1,5 +1,6 @@
-import { getAuth, signInWithEmailAndPassword, GoogleAuthProvider, signInWithPopup, signOut } from "firebase/auth";
+import { getAuth, signInWithEmailAndPassword, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged } from "firebase/auth";
 import { useAppStore } from '@/stores/app'
+
 export const useAuth = () => {
   const store = useAppStore()
   const login = async (email, password) => {
@@ -24,6 +25,7 @@ export const useAuth = () => {
       store.currentUser = user
     })
   }
+
 
   return {
     login,
