@@ -12,18 +12,18 @@ import '@/assets/github-markdown-css.css'
 import 'highlight.js/styles/monokai.css';
 
 // 状態管理
-const appStore = useAppStore()
+const store = useAppStore()
 // 現在のプロジェクト
 const route = useRoute()
 const router = useRouter()
 const projectId = route.params.projectId
 const editProjectId = ref(null)
 editProjectId.value = projectId
-appStore.currentProjectId = projectId
+store.currentProjectId = projectId
 
 // 現在のタスク
 const taskId = route.params.taskId
-appStore.currentTaskId = null
+store.currentTaskId = null
 const editTask = ref({})
 const originTask = ref({})
 
@@ -33,14 +33,14 @@ const markdown = ref()
 // ログインを監視
 const auth = getAuth()
 auth.onAuthStateChanged(user => {
-  appStore.currentUser = user
+  store.currentUser = user
   if (!user) return
   getTask()
 })
 // タスク取得
 const getTask = async () => {
   try {
-    const docSnap = await getDoc(doc(db, "users", appStore.currentUser.uid, "projects", projectId, "tasks", taskId));
+    const docSnap = await getDoc(doc(db, "users", store.currentUser.uid, "projects", projectId, "tasks", taskId));
     editTask.value = docSnap.data()
     originTask.value = docSnap.data()
     console.log(docSnap.data())
@@ -82,7 +82,7 @@ const saveByShortcutKey = (event) => {
 // タスク編集
 const updateTask = async () => {
   try {
-    await updateDoc(doc(db, "users", appStore.currentUser.uid, "projects", projectId, "tasks", taskId), {
+    await updateDoc(doc(db, "users", store.currentUser.uid, "projects", projectId, "tasks", taskId), {
       content: editTask.value.content,
       description: editTask.value.description,
       status: editTask.value.status,
@@ -90,8 +90,8 @@ const updateTask = async () => {
       // projectId: editTask.value.projectId,
     });
     getTask()
-    appStore.currentTaskId = taskId
-    appStore.flash = '保存しました'
+    store.currentTaskId = taskId
+    store.flash = '保存しました'
   } catch (error) {
     console.log(error)
   }
@@ -100,13 +100,13 @@ const updateTask = async () => {
 // プロジェクト変更
 const changeProject = async () => {
   try {
-    const taskRef = collection(db, "users", appStore.currentUser.uid, "projects", editProjectId.value, "tasks")
+    const taskRef = collection(db, "users", store.currentUser.uid, "projects", editProjectId.value, "tasks")
     await addDoc(taskRef, {
       ...editTask.value,
       createdAt: new Date()
     })
-    appStore.flash = 'プロジェクトを変更しました'
-    await deleteDoc(doc(db, "users", appStore.currentUser.uid, "projects", projectId, "tasks", taskId))
+    store.flash = 'プロジェクトを変更しました'
+    await deleteDoc(doc(db, "users", store.currentUser.uid, "projects", projectId, "tasks", taskId))
     router.push("/projects/" + editProjectId.value)
   } catch (error) {
     console.log(error);
@@ -164,7 +164,7 @@ const changeProject = async () => {
         <dd>
           <form @submit.prevent="changeProject" class="flex items-center">
             <select v-model="editProjectId" class="form-control-sm">
-              <template v-for="project in appStore.projects" :key="project.id">
+              <template v-for="project in store.projects" :key="project.id">
                 <option :value="project.id">{{ project.name }}</option>
               </template>
             </select>

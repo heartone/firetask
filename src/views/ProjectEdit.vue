@@ -11,21 +11,21 @@ import Markdown from 'vue3-markdown-it'
 import Modal from '@/components/Modal.vue'
 import ElasticTextArea from '@/components/ElasticTextArea.vue'
 
-const appStore = useAppStore()
+const store = useAppStore()
 const route = useRoute()
 const router = useRouter()
 const projectId = route.params.projectId
 const editProject = ref({})
 const originProject = ref({})
-if (!appStore.currentProjectId) {
-  appStore.currentProjectId = projectId
+if (!store.currentProjectId) {
+  store.currentProjectId = projectId
 }
-appStore.currentTaskId = null
+store.currentTaskId = null
 
 // プロジェクト取得
 const getProject = async () => {
   try {
-    const docSnap = await getDoc(doc(db, "users", appStore.currentUser.uid, "projects", projectId));
+    const docSnap = await getDoc(doc(db, "users", store.currentUser.uid, "projects", projectId));
     editProject.value = docSnap.data()
     originProject.value = docSnap.data()
   } catch (error) {
@@ -66,29 +66,29 @@ const saveByShortcutKey = (event) => {
 }
 // プロジェクト編集
 const updateProject = async () => {
-  await updateDoc(doc(db, "users", appStore.currentUser.uid, "projects", projectId), {
+  await updateDoc(doc(db, "users", store.currentUser.uid, "projects", projectId), {
     name: editProject.value.name || '',
     priority: parseInt(editProject.value.priority) || 0,
     description: editProject.value.description || '',
   });
   getProject()
-  appStore.flash = '保存しました'
+  store.flash = '保存しました'
 
 }
 // プロジェクト削除
 const showModal = ref(false)
 const deleteProject = async () => {
   // 関連タスクを削除
-  const tasksRef = collection(db, "users", appStore.currentUser.uid, "projects", projectId, "tasks")
+  const tasksRef = collection(db, "users", store.currentUser.uid, "projects", projectId, "tasks")
   const snapshot = await getDocs(tasksRef)
   snapshot.docs.map(task => {
      deleteDoc(doc(db, "tasks", task.id))
   })
   // プロジェクトを削除
-  await deleteDoc(doc(db, "users", appStore.currentUser.uid, "projects", projectId))
-  appStore.currentProjectId = null
+  await deleteDoc(doc(db, "users", store.currentUser.uid, "projects", projectId))
+  store.currentProjectId = null
   router.push({name: 'home'})
-  appStore.flash = 'プロジェクトを削除しました'
+  store.flash = 'プロジェクトを削除しました'
 
 }
 

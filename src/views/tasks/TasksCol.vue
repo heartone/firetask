@@ -8,7 +8,7 @@ import Modal from '@/components/Modal.vue'
 import Dropdown from '@/components/Dropdown.vue'
 
 const props = defineProps(['status', 'tasks', 'isLoading'])
-const appStore = useAppStore()
+const store = useAppStore()
 const showModal = ref(false) // モーダル表示判定用
 // タスク削除イベント発行
 const emits = defineEmits(['onDeleteTask'])
@@ -24,10 +24,10 @@ const statusText = computed(() => {
 // タスク一括削除
 const deleteTasks = async () => {
   await props.tasks.map(task => {
-      deleteDoc(doc(db, "users", appStore.currentUser.uid, "projects", appStore.currentProjectId, "tasks", task.id))
+      deleteDoc(doc(db, "users", store.currentUser.uid, "projects", store.currentProjectId, "tasks", task.id))
   })
   showModal.value = false
-  appStore.flash = props.tasks.length + ' 件のタスクを削除しました'
+  store.flash = props.tasks.length + ' 件のタスクを削除しました'
 }
 </script>
 

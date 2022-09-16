@@ -11,15 +11,15 @@ import Modal from '@/components/Modal.vue'
 
 const auth = getAuth()
 const showModal = ref(false)
-const appStore = useAppStore()
+const store = useAppStore()
 const projectId = useRoute().params.projectId
-appStore.currentProjectId = projectId
+store.currentProjectId = projectId
 // タスク一覧
 const tasks = ref([])
 const isLoading = ref(false)
 // ログインを監視
 auth.onAuthStateChanged(user => {
-  appStore.currentUser = user
+  store.currentUser = user
   if (!user) return
   const tasksRef = collection(db, "users", user?.uid, "projects", projectId, "tasks")
   // 変更を監視
@@ -48,16 +48,16 @@ const progressCount = computed(() => {
 watch(progressCount, (newValue, oldValue) => {
   // 変更がなければ更新しない
   if (
-    JSON.stringify(Object.entries(appStore.currentProject.count || {}).sort())
+    JSON.stringify(Object.entries(store.currentProject.count || {}).sort())
     ==
     JSON.stringify(Object.entries(progressCount.value).sort())
   ) return
   // 変更があれば現在のプロジェクトの値を更新
   try {
-    updateDoc(doc(db, "users", appStore.currentUser.uid, "projects", projectId), {
+    updateDoc(doc(db, "users", store.currentUser.uid, "projects", projectId), {
       count: newValue
     });
-    appStore.currentProject.count = progressCount.value
+    store.currentProject.count = progressCount.value
   } catch (error) {
     console.log(error)
   }
@@ -72,8 +72,8 @@ const onDeleteTask = (taskId) => {
 // タスク削除
 const deleteTask = async () => {
   try {
-    await deleteDoc(doc(db, "users", appStore.currentUser.uid, "projects", projectId, "tasks", deleteTaskId.value))
-    appStore.flash = 'タスクを削除しました'
+    await deleteDoc(doc(db, "users", store.currentUser.uid, "projects", projectId, "tasks", deleteTaskId.value))
+    store.flash = 'タスクを削除しました'
     showModal.value = false
   } catch (error) {
     console.log(error)

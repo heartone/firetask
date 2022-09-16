@@ -5,12 +5,12 @@ import { db } from '@/FirebaseConfig.js'
 import { collection, addDoc, doc } from "firebase/firestore"
 
 const inputNewProjectName = ref(null)
-const appStore = useAppStore()
+const store = useAppStore()
 const newProject = reactive({
   name: '',
   priority: 0
 })
-const uid = appStore.currentUser.uid
+const uid = store.currentUser.uid
 
 const createProject = async () => {
   try {
@@ -18,7 +18,7 @@ const createProject = async () => {
     await addDoc(projectRef, newProject)
     newProject.name = ''
     inputNewProjectName.value.focus()
-    appStore.flash = 'プロジェクトを作成しました'
+    store.flash = 'プロジェクトを作成しました'
   } catch (error) {
     console.log(error);
   }

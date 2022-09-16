@@ -5,7 +5,7 @@ import PageHeader from '@/components/PageHeader.vue'
 import ProjectProgress from '@/views/projects/ProjectProgress.vue'
 
 const props = defineProps(['progressCount'])
-const appStore = useAppStore()
+const store = useAppStore()
 </script>
 
 <template>

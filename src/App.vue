@@ -10,11 +10,11 @@ import Logout from '@/components/Logout.vue'
 import Flash from '@/components/Flash.vue'
 import LoadingIcon from '@/components/LoadingIcon.vue'
 const auth = getAuth()
-const appStore = useAppStore()
+const store = useAppStore()
 const isLoading = ref(false)
 // ログインを監視
 auth.onAuthStateChanged(user => {
-  appStore.currentUser = user
+  store.currentUser = user
   if (!user) return
   const projectsRef = collection(db, "users", user.uid, "projects")
   // プロジェクトの変更を監視
@@ -24,12 +24,12 @@ auth.onAuthStateChanged(user => {
       const snapshot = await getDocs(
         query(projectsRef, orderBy("priority", "desc"))
       )
-      appStore.projects = snapshot.docs.map(doc => ({
+      store.projects = snapshot.docs.map(doc => ({
         id: doc.id, ...doc.data()
       }))
 
     } catch(e) {
-      appStore.error = e.messge
+      store.error = e.messge
       console.log(e)
     } finally {
       isLoading.value = false

@@ -6,8 +6,8 @@ import { db } from '@/FirebaseConfig.js'
 import { collection, addDoc,  } from "firebase/firestore"
 import { useAppStore } from '@/stores/app.js'
 
-const appStore = useAppStore()
-const uid = appStore.currentUser.uid
+const store = useAppStore()
+const uid = store.currentUser.uid
 const projectId = useRoute().params.projectId
 const inputNewTaskContent = ref(null) // input要素を参照
 
@@ -27,7 +27,7 @@ const createTask = async () => {
       ...newTask,
       createdAt: new Date()
     })
-    appStore.flash = 'タスクを追加しました'
+    store.flash = 'タスクを追加しました'
     newTask.content = '' // 入力欄をクリア
     inputNewTaskContent.value.focus() // 入力欄にフォーカス
   } catch (error) {
