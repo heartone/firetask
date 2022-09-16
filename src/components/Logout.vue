@@ -1,27 +1,29 @@
 <script setup>
-import { ref } from "vue"
-import { getAuth, signOut } from "firebase/auth"
-import { useAppStore } from "@/stores/app.js"
-import { useRouter } from "vue-router"
+import { ref } from 'vue'
+import { useAuth } from '@/composables/useAuth'
+import { useAppStore } from '@/stores/app'
+import { useRouter } from 'vue-router'
 
+const auth = useAuth()
 const router = useRouter()
-const auth = getAuth()
-const appStore = useAppStore()
-const isLoading = ref(false)
+const store = useAppStore()
 const logout = async () => {
-  isLoading.value = true
+  store.isLoading = true
   try {
-    await signOut(auth)
+    await auth.logout(auth)
     router.push("/login")
-  } catch(error) {
-    console.log(error)
+  } catch(e) {
+    store.error = e.message
   } finally {
-    isLoading.value = false
+    store.isLoading = false
   }
 }
 </script>
 <template>
-  <div v-if="appStore.currentUser">
+  <div v-if="store.currentUser">
     <button class="btn-sm" @click="logout()"><i class="fa fa-sign-out-alt"></i> ログアウト</button>
   </div>
 </template>
+
+
+
