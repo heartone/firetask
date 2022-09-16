@@ -4,6 +4,10 @@ export const useAppStore = defineStore('app', {
   state: () => ({
     currentUser: ref(null),
     projectId: ref(null),
+<<<<<<< HEAD
+=======
+    currentTaskId: ref(null),
+>>>>>>> restructure
     projects: ref([]),
     tasks: ref([]),
     flash: ref(''),

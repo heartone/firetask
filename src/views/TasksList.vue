@@ -1,15 +1,25 @@
 <script setup>
 import { ref, computed, watch } from "vue"
 import { useRoute } from 'vue-router'
+<<<<<<< HEAD:src/views/tasks/TasksList.vue
 import { useAppStore } from '@/stores/app.js'
 import { db } from '@/FirebaseConfig.js'
+=======
+import { useAuth } from '@/composables/useAuth'
+import { useProject } from '@/composables/useProject'
+import { useTask } from '@/composables/useTask'
+import { useAppStore } from '@/stores/app'
+>>>>>>> restructure:src/views/TasksList.vue
 import { onSnapshot, collection, getDocs, query, where, orderBy, updateDoc, deleteDoc, doc } from "firebase/firestore"
+
 import TaskHeader from '@/views/tasks/TaskHeader.vue'
 import TasksCol from '@/views/tasks/TasksCol.vue'
 import Modal from '@/components/Modal.vue'
 
+const auth = useAuth()
 const showModal = ref(false)
 const store = useAppStore()
+<<<<<<< HEAD:src/views/tasks/TasksList.vue
 const projectId = useRoute().params.projectId
 store.projectId = projectId
 
@@ -18,6 +28,26 @@ const tasks = ref([])
 // タスクcollection参照
 console.log(store.uid, store.projectId)
 const tasksRef = collection(db, "users", store.uid, "projects", projectId, "tasks")
+=======
+store.projectId = useRoute().params.projectId
+
+// タスク一覧
+const tasks = ref([])
+// 変更を監視
+const tasksRef = useTask().collectionRef()
+onSnapshot(tasksRef, async () => {
+  store.isLoading = true
+  const snapshot = await getDocs(
+    query(tasksRef, orderBy("priority", "asc"))
+  )
+  tasks.value = snapshot.docs.map(doc => ({
+    id: doc.id, ...doc.data()
+  }))
+  store.isLoading = false
+})
+
+
+>>>>>>> restructure:src/views/TasksList.vue
 
 // ステータス集計
 const progressCount = computed(() => {
@@ -28,6 +58,7 @@ const progressCount = computed(() => {
   })
   return count
 })
+<<<<<<< HEAD:src/views/tasks/TasksList.vue
 // タスク一覧を取得
 const getTasks = async () => {
   try {
@@ -45,21 +76,36 @@ const getTasks = async () => {
 }
 // 変更を監視
 onSnapshot(tasksRef,  () => getTasks())
+=======
+
+
+>>>>>>> restructure:src/views/TasksList.vue
 // ステータス再集計
+const sortedJson = (obj) => JSON.stringify(Object.entries(obj || {}).sort())
 watch(progressCount, (newValue, oldValue) => {
   // 変更がなければ更新しない
+<<<<<<< HEAD:src/views/tasks/TasksList.vue
   if (
     JSON.stringify(Object.entries(store.currentProject.count || {}).sort())
     ==
     JSON.stringify(Object.entries(progressCount.value).sort())
   ) return
+=======
+  if (sortedJson(store.currentProject.count) == sortedJson(progressCount.value)) {
+    return
+  }
+>>>>>>> restructure:src/views/TasksList.vue
   // 変更があれば現在のプロジェクトの値を更新
   try {
-    updateDoc(doc(db, "projects", projectId), {
+    updateDoc(useProject().docRef(store.projectId), {
       count: newValue
     });
     store.currentProject.count = progressCount.value
+<<<<<<< HEAD:src/views/tasks/TasksList.vue
   } catch (e) {
+=======
+  } catch (error) {
+>>>>>>> restructure:src/views/TasksList.vue
     store.error = e.message
   }
 })
@@ -73,7 +119,11 @@ const onDeleteTask = (taskId) => {
 // タスク削除
 const deleteTask = async () => {
   try {
+<<<<<<< HEAD:src/views/tasks/TasksList.vue
     await deleteDoc(doc(db, "tasks", deleteTaskId.value))
+=======
+    await deleteDoc(useTask().docRef( deleteTaskId.value))
+>>>>>>> restructure:src/views/TasksList.vue
     store.flash = 'タスクを削除しました'
     showModal.value = false
   } catch (e) {

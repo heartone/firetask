@@ -24,3 +24,6 @@ const logout = async () => {
     <button class="btn-sm" @click="logout()"><i class="fa fa-sign-out-alt"></i> ログアウト</button>
   </div>
 </template>
+
+
+

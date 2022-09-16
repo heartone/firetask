@@ -6,13 +6,19 @@ import { onSnapshot, collection, getDocs, query ,where, orderBy } from "firebase
 import { useAppStore } from '@/stores/app.js'
 import { RouterLink, RouterView } from 'vue-router'
 import TopHeader from '@/components/TopHeader.vue'
+import Logout from '@/components/Logout.vue'
 import Flash from '@/components/Flash.vue'
 import LoadingIcon from '@/components/LoadingIcon.vue'
+<<<<<<< HEAD
 import Modal from '@/components/Modal.vue'
 
 const auth = getAuth()
 const store = useAppStore()
 const isLoading = ref(false)
+=======
+const auth = getAuth()
+const store = useAppStore()
+>>>>>>> restructure
 // ログインを監視
 auth.onAuthStateChanged(user => {
   store.currentUser = user
@@ -20,7 +26,11 @@ auth.onAuthStateChanged(user => {
   const projectsRef = collection(db, "users", user.uid, "projects")
   // プロジェクトの変更を監視
   onSnapshot(projectsRef, async() => {
+<<<<<<< HEAD
     isLoading.value = true
+=======
+    store.isLoading = true
+>>>>>>> restructure
     try {
       const snapshot = await getDocs(
         query(projectsRef, orderBy("priority", "desc"))
@@ -28,6 +38,18 @@ auth.onAuthStateChanged(user => {
       store.projects = snapshot.docs.map(doc => ({
         id: doc.id, ...doc.data()
       }))
+<<<<<<< HEAD
+=======
+
+    } catch(e) {
+      store.error = e.messge
+      console.log(e)
+    } finally {
+      store.isLoading = false
+    }
+  })
+})
+>>>>>>> restructure
 
     } catch(e) {
       store.error.value = e.messge
@@ -53,7 +75,11 @@ const resetErrorMessage = () => {
     </main>
     <footer class="py-5 flex justify-center items-center text-xs text-gray-500">
       <div class="mr-3">&copy; 有限会社ハートワン</div>
+<<<<<<< HEAD
 
+=======
+      <Logout />
+>>>>>>> restructure
     </footer>
   </div>
   <Modal :show="!!store.error" @close="resetErrorMessage">

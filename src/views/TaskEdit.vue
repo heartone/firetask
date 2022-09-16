@@ -1,11 +1,11 @@
 <script setup>
-import { computed, ref, onMounted, onUnmounted } from "vue"
+import { computed, ref, onMounted, onUnmounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useAppStore } from '@/stores/app.js'
-import { db } from '@/FirebaseConfig.js'
-import { doc, getDoc, updateDoc } from "firebase/firestore"
+import { useTask } from '@/composables/useTask'
 import Markdown from 'vue3-markdown-it'
 import PageHeader from '@/components/PageHeader.vue'
+import ElasticTextArea from '@/components/ElasticTextArea.vue'
 import '@/assets/github-markdown-css.css'
 import 'highlight.js/styles/monokai.css';
 
@@ -15,43 +15,40 @@ const store = useAppStore()
 const route = useRoute()
 const router = useRouter()
 const projectId = route.params.projectId
+const editProjectId = ref(projectId)
 store.projectId = projectId
+
 // 現在のタスク
 const taskId = route.params.taskId
 store.currentTaskId = null
 const editTask = ref({})
 const originTask = ref({})
+store.currentTaskId = null
+
+// マークダウン部を参照
+const markdown = ref()
 
 // タスク取得
 const getTask = async () => {
   try {
-    const docSnap = await getDoc(doc(db, "tasks", taskId));
+    const docSnap = await useTask().getTask(taskId)
     editTask.value = docSnap.data()
     originTask.value = docSnap.data()
-  } catch (error) {
-    console.log(error);
+  } catch (e) {
+    console.log(e);
+    store.error = e.message
   }
 }
-// タスク読み込み
-onMounted(getTask())
 
 // タスクの変更監視
 const isEdited = computed(() => {
-  return (
-    editTask.value.content != originTask.value.content
-    ||
-    editTask.value.status != originTask.value.status
-    ||
-    editTask.value.priority != originTask.value.priority
-    ||
-    editTask.value.description != originTask.value.description
-    ||
-    editTask.value.projectId != originTask.value.projectId
-  )
+  // 指定の属性のうち一つでも変更があればtrueを返す
+  return ["content", "status", "priority", "description"].map((attr) => editTask.value[attr] != originTask.value[attr]).includes(true)
 })
 
 // ショートカットキー登録
 onMounted(() => {
+  getTask()
   document.addEventListener('keydown', saveByShortcutKey)
 })
 onUnmounted(() => {
@@ -77,17 +74,32 @@ const saveByShortcutKey = (event) => {
 // タスク編集
 const updateTask = async () => {
   try {
-    await updateDoc(doc(db, "tasks", taskId), {
+    await useTask().updateTask(taskId, {
       content: editTask.value.content,
       description: editTask.value.description,
       status: editTask.value.status,
-      projectId: editTask.value.projectId,
+      priority: editTask.value.priority,
     });
     getTask()
     store.currentTaskId = taskId
     store.flash = '保存しました'
   } catch (error) {
     console.log(error)
+  }
+}
+
+// プロジェクト変更
+const changeProject = async () => {
+  try {
+    await useTask().changeProject(editProjectId.value, taskId, {
+      ...editTask.value,
+      createdAt: new Date()
+    })
+    store.flash = 'プロジェクトを変更しました'
+    router.push("/projects/" + editProjectId.value)
+  } catch (e) {
+    console.log(e);
+    store.error = e.message
   }
 }
 </script>
@@ -106,7 +118,7 @@ const updateTask = async () => {
   <div class="container-fluid py-3">
     <div class="md:grid sm:grid-cols-12 gap-5">
       <div class="md:col-span-5 mb-5">
-        <dl class="form-list">
+        <dl class="form-list sticky top-0">
           <dt>タスク内容</dt>
           <dd><input type="text" v-model="editTask.content" class="form-control w-full" placeholder="タスク内容を入力"></dd>
           <dt>ステータスと優先度</dt>
@@ -126,23 +138,30 @@ const updateTask = async () => {
           </dd>
           <dt>メモ</dt>
           <dd>
-            <textarea v-model="editTask.description" class="form-control w-full text-sm" rows="7"></textarea>
+            <ElasticTextArea v-model="editTask.description" class="form-control w-full text-sm" rows="4"></ElasticTextArea>
             <div class="mt-3 hidden md:block text-sm text-gray-500">ctrl + s または command + s で保存</div>
-          </dd>
-          <dt>プロジェクトを変更</dt>
-          <dd>
-            <select v-model="editTask.projectId" class="form-control">
-              <template v-for="project in store.projects" :key="project.id">
-                <option :value="project.id">{{ project.name }}</option>
-              </template>
-            </select>
           </dd>
         </dl>
       </div>
       <div class="md:col-span-7 bg-white rounded-lg p-3">
         <h1 class="text-2xl mb-4 pb-4 py-1 border-b">{{ editTask.content }}</h1>
-        <Markdown class="markdown-body" :source="editTask.description" />
+        <Markdown ref="markdown" class="markdown-body" :source="editTask.description" />
       </div>
+    </div>
+    <div class="my-5 pt-3 border-t">
+      <dl class="form-list">
+        <dt>プロジェクト移動</dt>
+        <dd>
+          <form @submit.prevent="changeProject" class="flex items-center">
+            <select v-model="editProjectId" class="form-control-sm">
+              <template v-for="project in store.projects" :key="project.id">
+                <option :value="project.id">{{ project.name }}</option>
+              </template>
+            </select>
+            <button type="submit" class="btn-sm btn-success ml-1">移動</button>
+          </form>
+        </dd>
+      </dl>
     </div>
   </div>
 </template>
