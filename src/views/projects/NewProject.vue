@@ -7,10 +7,6 @@ const inputNewProjectName = ref(null)
 const store = useAppStore()
 const newProject = reactive({
   name: '',
-<<<<<<< HEAD
-  uid: store.currentUser.uid,
-=======
->>>>>>> restructure
   priority: 0
 })
 const uid = store.currentUser.uid
@@ -21,14 +17,9 @@ const addProject = async () => {
     newProject.name = ''
     inputNewProjectName.value.focus()
     store.flash = 'プロジェクトを作成しました'
-<<<<<<< HEAD
-  } catch (error) {
-    console.log(error);
-=======
   } catch (e) {
     console.log(e)
     store.error = e.message
->>>>>>> restructure
   }
 }
 </script>

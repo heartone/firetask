@@ -29,19 +29,11 @@ const progressCount = computed(() => {
       <router-link class="block p-4 bg-white border-b text-xl hover:text-orange-600" :to="{name: 'project', params:{ projectId: project.id }}">
         <div class="md:grid grid-cols-3">
           <div class="flex items-center justify-between">
-<<<<<<< HEAD:src/views/projects/ProjectsList.vue
-              <div class="flex items-center min-w-0">
-                <i class="fa fa-circle mr-2 text-orange-400" :class="{'text-gray-300': project.id !== store.projectId}"></i>
-                <div class="truncate">{{ project.name }}</div>
-              </div>
-              <div class="whitespace-nowrap text-xs text-gray-500 mr-2">優先度:{{ project.priority }}</div>
-=======
             <div class="flex items-center min-w-0">
               <i class="fa fa-circle mr-2 text-orange-400" :class="{'text-gray-300': project.id !== store.projectId}"></i>
               <div class="truncate text-lg">{{ project.name }}</div>
             </div>
             <div class="whitespace-nowrap text-xs text-gray-500 mr-2">優先度:{{ project.priority }}</div>
->>>>>>> restructure:src/views/ProjectsList.vue
           </div>
           <div class="flex items-center justify-center pt-4 md:pt-0">
             <div class="whitespace-nowrap py-0.5 px-3 rounded-full text-xs bg-yellow-200">TODO {{ project.count?.todo || 0 }}</div>

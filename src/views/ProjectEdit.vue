@@ -67,15 +67,6 @@ const saveByShortcutKey = (event) => {
 }
 // プロジェクト編集
 const updateProject = async () => {
-<<<<<<< HEAD:src/views/projects/ProjectEdit.vue
-  await updateDoc(doc(db, "users", store.uid, "projects", projectId), {
-    name: editProject.value.name || '',
-    priority: parseInt(editProject.value.priority) || 0,
-    description: editProject.value.description || '',
-  });
-  getProject()
-  store.flash = '保存しました'
-=======
   try {
     await useProject().updateProject(projectId, {
       name: editProject.value.name || '',
@@ -88,7 +79,6 @@ const updateProject = async () => {
     console.log(e)
     store.error = e.message
   }
->>>>>>> restructure:src/views/ProjectEdit.vue
 
 }
 // プロジェクト削除
@@ -100,12 +90,8 @@ const deleteProject = async () => {
      useTask().deleteTask(task.id)
   })
   // プロジェクトを削除
-<<<<<<< HEAD:src/views/projects/ProjectEdit.vue
-  await deleteDoc(doc(db, "users", store.uid, "projects", projectId))
-=======
   await useProject().deleteProject(projectId)
   store.projectId = null
->>>>>>> restructure:src/views/ProjectEdit.vue
   router.push({name: 'home'})
   store.flash = 'プロジェクトを削除しました'
 

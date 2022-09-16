@@ -44,14 +44,11 @@
 </template>
 
 <script setup>
-import { onMounted, onUnmounted, computed } from "vue";
 const emits = defineEmits(['close'])
-const props = defineProps({
+defineProps({
   show: {
     default: false
   },
 
 })
-
-
 </script>
