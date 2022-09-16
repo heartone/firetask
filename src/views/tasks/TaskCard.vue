@@ -1,14 +1,11 @@
 <script setup>
-import { ref } from 'vue'
 import { useRoute } from 'vue-router'
-import { db } from '@/FirebaseConfig.js'
-import { doc, updateDoc } from "firebase/firestore"
+import { useTask } from '@/composables/useTask'
 import { useAppStore } from '@/stores/app.js'
 import Dropdown from '@/components/Dropdown.vue'
 
 const store = useAppStore()
 const props = defineProps(['task'])
-const projectId = useRoute().params.projectId
 
 // タスク削除アクションを発行
 const emits = defineEmits(['onDeleteTask'])
@@ -27,10 +24,9 @@ const updateStatus = (status) => updateTask({status: status})
 // 優先度更新
 const updatePriority = (priority) => updateTask({priority: priority})
 // タスクを更新する
-const updateTask = async (field) => {
-  const taskRef = doc(db, "users", store.currentUser.uid, "projects", projectId, "tasks", props.task.id)
-  await updateDoc(taskRef, field)
-  store.flash = {status: 'ステータス', priority: '優先度'}[Object.keys(field)[0]] + 'を変更しました'
+const updateTask = async (fields) => {
+  await useTask().updateTask(props.task.id, fields)
+  store.flash = {status: 'ステータス', priority: '優先度'}[Object.keys(fields)[0]] + 'を変更しました'
   store.currentTaskId = props.task.id
 }
 </script>

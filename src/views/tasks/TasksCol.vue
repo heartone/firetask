@@ -1,15 +1,15 @@
 <script setup>
 import { ref, computed } from 'vue'
-import { useAppStore } from '@/stores/app.js'
-import { db } from '@/FirebaseConfig.js'
-import { deleteDoc, doc } from "firebase/firestore"
+import { useAppStore } from '@/stores/app'
+import { useTask } from '@/composables/useTask'
 import TaskCard from '@/views/tasks/TaskCard.vue'
 import Modal from '@/components/Modal.vue'
 import Dropdown from '@/components/Dropdown.vue'
 
-const props = defineProps(['status', 'tasks', 'isLoading'])
+const props = defineProps(['status', 'tasks'])
 const store = useAppStore()
 const showModal = ref(false) // モーダル表示判定用
+
 // タスク削除イベント発行
 const emits = defineEmits(['onDeleteTask'])
 const onDeleteTask = (taskId) => {
@@ -24,7 +24,7 @@ const statusText = computed(() => {
 // タスク一括削除
 const deleteTasks = async () => {
   await props.tasks.map(task => {
-      deleteDoc(doc(db, "users", store.currentUser.uid, "projects", store.currentProjectId, "tasks", task.id))
+    useTask().deleteTask(task.id)
   })
   showModal.value = false
   store.flash = props.tasks.length + ' 件のタスクを削除しました'
@@ -43,7 +43,7 @@ const deleteTasks = async () => {
           <button class="dropdown-link" @click="showModal=true">{{statusText}}のタスクを削除</button>
         </template>
       </Dropdown>
-      <div v-show="isLoading && !tasks.length"><i class="fa fa-circle-notch text-blue-400 fa-spin text-xl"></i></div>
+      <div v-show="store.isLoading && !tasks.length"><i class="fa fa-circle-notch text-blue-400 fa-spin text-xl"></i></div>
     </div>
     <div v-for="task in tasks" :key="task.id">
       <TaskCard :task="task" @onDeleteTask="onDeleteTask" />

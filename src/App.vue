@@ -11,7 +11,6 @@ import Flash from '@/components/Flash.vue'
 import LoadingIcon from '@/components/LoadingIcon.vue'
 const auth = getAuth()
 const store = useAppStore()
-const isLoading = ref(false)
 // ログインを監視
 auth.onAuthStateChanged(user => {
   store.currentUser = user
@@ -19,7 +18,7 @@ auth.onAuthStateChanged(user => {
   const projectsRef = collection(db, "users", user.uid, "projects")
   // プロジェクトの変更を監視
   onSnapshot(projectsRef, async() => {
-    isLoading.value = true
+    store.isLoading = true
     try {
       const snapshot = await getDocs(
         query(projectsRef, orderBy("priority", "desc"))
@@ -32,7 +31,7 @@ auth.onAuthStateChanged(user => {
       store.error = e.messge
       console.log(e)
     } finally {
-      isLoading.value = false
+      store.isLoading = false
     }
   })
 })
@@ -45,9 +44,6 @@ auth.onAuthStateChanged(user => {
     <TopHeader />
     <main class="flex-grow">
       <RouterView />
-      <div class="flex justify-center py-5" v-if="isLoading">
-        <LoadingIcon />
-      </div>
     </main>
     <footer class="py-5 flex justify-center items-center text-xs text-gray-500">
       <div class="mr-3">&copy; 有限会社ハートワン</div>

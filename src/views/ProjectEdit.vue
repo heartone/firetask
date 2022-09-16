@@ -1,11 +1,11 @@
 <script setup>
-import { ref, computed, onMounted, onUnmounted } from "vue"
+import { ref, computed, onMounted, onUnmounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import { useAppStore } from '@/stores/app.js'
-import { db } from '@/FirebaseConfig.js'
-import { doc, collection, query, where, getDoc, getDocs, updateDoc, deleteDoc } from "firebase/firestore"
+import { useAppStore } from '@/stores/app'
+import { useProject } from '@/composables/useProject'
+import { useTask } from '@/composables/useTask'
 import '@/assets/github-markdown-css.css'
-import 'highlight.js/styles/monokai.css';
+import 'highlight.js/styles/monokai.css'
 import PageHeader from '@/components/PageHeader.vue'
 import Markdown from 'vue3-markdown-it'
 import Modal from '@/components/Modal.vue'
@@ -17,19 +17,20 @@ const router = useRouter()
 const projectId = route.params.projectId
 const editProject = ref({})
 const originProject = ref({})
-if (!store.currentProjectId) {
-  store.currentProjectId = projectId
+if (!store.projectId) {
+  store.projectId = projectId
 }
 store.currentTaskId = null
 
 // プロジェクト取得
 const getProject = async () => {
   try {
-    const docSnap = await getDoc(doc(db, "users", store.currentUser.uid, "projects", projectId));
+    const docSnap = await useProject().getProject(projectId)
     editProject.value = docSnap.data()
     originProject.value = docSnap.data()
-  } catch (error) {
-    console.log(error)
+  } catch (e) {
+    console.log(e)
+    store.error = e.message
   }
 }
 
@@ -66,27 +67,31 @@ const saveByShortcutKey = (event) => {
 }
 // プロジェクト編集
 const updateProject = async () => {
-  await updateDoc(doc(db, "users", store.currentUser.uid, "projects", projectId), {
-    name: editProject.value.name || '',
-    priority: parseInt(editProject.value.priority) || 0,
-    description: editProject.value.description || '',
-  });
-  getProject()
-  store.flash = '保存しました'
+  try {
+    await useProject().updateProject(projectId, {
+      name: editProject.value.name || '',
+      priority: parseInt(editProject.value.priority) || 0,
+      description: editProject.value.description || '',
+    })
+    getProject()
+    store.flash = '保存しました'
+  } catch (e) {
+    console.log(e)
+    store.error = e.message
+  }
 
 }
 // プロジェクト削除
 const showModal = ref(false)
 const deleteProject = async () => {
   // 関連タスクを削除
-  const tasksRef = collection(db, "users", store.currentUser.uid, "projects", projectId, "tasks")
-  const snapshot = await getDocs(tasksRef)
+  const snapshot = await useTask().getTasks(projectId)
   snapshot.docs.map(task => {
-     deleteDoc(doc(db, "tasks", task.id))
+     useTask().deleteTask(task.id)
   })
   // プロジェクトを削除
-  await deleteDoc(doc(db, "users", store.currentUser.uid, "projects", projectId))
-  store.currentProjectId = null
+  await useProject().deleteProject(projectId)
+  store.projectId = null
   router.push({name: 'home'})
   store.flash = 'プロジェクトを削除しました'
 

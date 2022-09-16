@@ -25,15 +25,12 @@ const progressCount = computed(() => {
     <ProjectProgress class="mt-2 md:m-0" :count=progressCount />
   </PageHeader>
   <div class="container-fluid py-3">
-
-
-
     <template v-for="project in store.projects" :key="project.id">
       <router-link class="block p-4 bg-white border-b text-xl hover:text-orange-600" :to="{name: 'project', params:{ projectId: project.id }}">
         <div class="md:grid grid-cols-3">
           <div class="flex items-center justify-between">
             <div class="flex items-center min-w-0">
-              <i class="fa fa-circle mr-2 text-orange-400" :class="{'text-gray-300': project.id !== store.currentProjectId}"></i>
+              <i class="fa fa-circle mr-2 text-orange-400" :class="{'text-gray-300': project.id !== store.projectId}"></i>
               <div class="truncate text-lg">{{ project.name }}</div>
             </div>
             <div class="whitespace-nowrap text-xs text-gray-500 mr-2">優先度:{{ project.priority }}</div>
@@ -49,5 +46,9 @@ const progressCount = computed(() => {
         </div>
       </router-link>
     </template>
+
+    <div class="flex justify-center py-5" v-if="store.isLoading">
+      <LoadingIcon />
+    </div>
   </div>
 </template>

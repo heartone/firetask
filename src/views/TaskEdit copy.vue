@@ -3,6 +3,9 @@ import { computed, ref, onMounted, onUnmounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useAppStore } from '@/stores/app.js'
 import { useTask } from '@/composables/useTask'
+import { getAuth } from 'firebase/auth'
+import { db } from '@/FirebaseConfig.js'
+import { doc, getDoc, updateDoc, collection, addDoc, deleteDoc } from "firebase/firestore"
 import Markdown from 'vue3-markdown-it'
 import PageHeader from '@/components/PageHeader.vue'
 import ElasticTextArea from '@/components/ElasticTextArea.vue'
@@ -20,22 +23,29 @@ store.projectId = projectId
 
 // 現在のタスク
 const taskId = route.params.taskId
+store.currentTaskId = null
 const editTask = ref({})
 const originTask = ref({})
-store.currentTaskId = null
 
 // マークダウン部を参照
 const markdown = ref()
 
+// ログインを監視
+const auth = getAuth()
+auth.onAuthStateChanged(user => {
+  store.currentUser = user
+  if (!user) return
+  getTask()
+})
 // タスク取得
 const getTask = async () => {
   try {
-    const docSnap = await useTask().getTask(taskId)
+    const docSnap = await getDoc(doc(db, "users", store.currentUser.uid, "projects", projectId, "tasks", taskId));
     editTask.value = docSnap.data()
     originTask.value = docSnap.data()
-  } catch (e) {
-    console.log(e);
-    store.error = e.message
+    console.log(docSnap.data())
+  } catch (error) {
+    console.log(error);
   }
 }
 
@@ -47,7 +57,6 @@ const isEdited = computed(() => {
 
 // ショートカットキー登録
 onMounted(() => {
-  getTask()
   document.addEventListener('keydown', saveByShortcutKey)
 })
 onUnmounted(() => {
@@ -73,11 +82,12 @@ const saveByShortcutKey = (event) => {
 // タスク編集
 const updateTask = async () => {
   try {
-    await useTask().updateTask(taskId, {
+    await updateDoc(doc(db, "users", store.currentUser.uid, "projects", projectId, "tasks", taskId), {
       content: editTask.value.content,
       description: editTask.value.description,
       status: editTask.value.status,
       priority: editTask.value.priority,
+      // projectId: editTask.value.projectId,
     });
     getTask()
     store.currentTaskId = taskId
@@ -90,15 +100,16 @@ const updateTask = async () => {
 // プロジェクト変更
 const changeProject = async () => {
   try {
-    await useTask().changeProject(editProjectId.value, taskId, {
+    const taskRef = collection(db, "users", store.currentUser.uid, "projects", editProjectId.value, "tasks")
+    await addDoc(taskRef, {
       ...editTask.value,
       createdAt: new Date()
     })
     store.flash = 'プロジェクトを変更しました'
+    await deleteDoc(doc(db, "users", store.currentUser.uid, "projects", projectId, "tasks", taskId))
     router.push("/projects/" + editProjectId.value)
-  } catch (e) {
-    console.log(e);
-    store.error = e.message
+  } catch (error) {
+    console.log(error);
   }
 }
 </script>

@@ -1,39 +1,38 @@
 <script setup>
 import { ref, computed, watch } from "vue"
-import { useRoute, useRouter } from 'vue-router'
-import { getAuth } from 'firebase/auth'
-import { useAppStore } from '@/stores/app.js'
-import { db } from '@/FirebaseConfig.js'
+import { useRoute } from 'vue-router'
+import { useAuth } from '@/composables/useAuth'
+import { useProject } from '@/composables/useProject'
+import { useTask } from '@/composables/useTask'
+import { useAppStore } from '@/stores/app'
 import { onSnapshot, collection, getDocs, query, where, orderBy, updateDoc, deleteDoc, doc } from "firebase/firestore"
+
 import TaskHeader from '@/views/tasks/TaskHeader.vue'
 import TasksCol from '@/views/tasks/TasksCol.vue'
 import Modal from '@/components/Modal.vue'
 
-const auth = getAuth()
+const auth = useAuth()
 const showModal = ref(false)
 const store = useAppStore()
-const projectId = useRoute().params.projectId
-store.currentProjectId = projectId
+store.projectId = useRoute().params.projectId
+
 // タスク一覧
 const tasks = ref([])
-const isLoading = ref(false)
-// ログインを監視
-auth.onAuthStateChanged(user => {
-  store.currentUser = user
-  if (!user) return
-  const tasksRef = collection(db, "users", user?.uid, "projects", projectId, "tasks")
-  // 変更を監視
-  onSnapshot(tasksRef, async () => {
-    isLoading.value = true
-    const snapshot = await getDocs(
-      query(tasksRef, orderBy("priority", "asc"))
-    )
-    tasks.value = snapshot.docs.map(doc => ({
-      id: doc.id, ...doc.data()
-    }))
-    isLoading.value = false
-  })
+// 変更を監視
+const tasksRef = useTask().collectionRef()
+onSnapshot(tasksRef, async () => {
+  store.isLoading = true
+  const snapshot = await getDocs(
+    query(tasksRef, orderBy("priority", "asc"))
+  )
+  tasks.value = snapshot.docs.map(doc => ({
+    id: doc.id, ...doc.data()
+  }))
+  store.isLoading = false
 })
+
+
+
 // ステータス集計
 const progressCount = computed(() => {
   const taskStatuses = tasks.value.map(t => t.status)
@@ -44,22 +43,22 @@ const progressCount = computed(() => {
   return count
 })
 
+
 // ステータス再集計
+const sortedJson = (obj) => JSON.stringify(Object.entries(obj || {}).sort())
 watch(progressCount, (newValue, oldValue) => {
   // 変更がなければ更新しない
-  if (
-    JSON.stringify(Object.entries(store.currentProject.count || {}).sort())
-    ==
-    JSON.stringify(Object.entries(progressCount.value).sort())
-  ) return
+  if (sortedJson(store.currentProject.count) == sortedJson(progressCount.value)) {
+    return
+  }
   // 変更があれば現在のプロジェクトの値を更新
   try {
-    updateDoc(doc(db, "users", store.currentUser.uid, "projects", projectId), {
+    updateDoc(useProject().docRef(store.projectId), {
       count: newValue
     });
     store.currentProject.count = progressCount.value
   } catch (error) {
-    console.log(error)
+    store.error = e.message
   }
 })
 
@@ -72,11 +71,11 @@ const onDeleteTask = (taskId) => {
 // タスク削除
 const deleteTask = async () => {
   try {
-    await deleteDoc(doc(db, "users", store.currentUser.uid, "projects", projectId, "tasks", deleteTaskId.value))
+    await deleteDoc(useTask().docRef( deleteTaskId.value))
     store.flash = 'タスクを削除しました'
     showModal.value = false
-  } catch (error) {
-    console.log(error)
+  } catch (e) {
+    store.error = e.message
   }
 }
 </script>
@@ -90,7 +89,7 @@ const deleteTask = async () => {
   <div class="container-fluid py-3 overflow-x-auto">
     <div class="tasksCols grid grid-cols-3 gap-4">
       <template v-for="status in ['todo', 'doing', 'done']" :key="status">
-        <TasksCol @onDeleteTask="onDeleteTask" :isLoading="isLoading" :status="status" :tasks="tasks.filter(task => task.status == status)" />
+        <TasksCol @onDeleteTask="onDeleteTask" :status="status" :tasks="tasks.filter(task => task.status == status)" />
       </template>
     </div>
   </div>
