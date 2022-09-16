@@ -17,6 +17,7 @@ const progressCount = computed(() => {
   }
   return count
 })
+
 </script>
 <template>
   <PageHeader>
@@ -24,9 +25,9 @@ const progressCount = computed(() => {
     <ProjectProgress class="mt-2 md:m-0" :count=progressCount />
   </PageHeader>
   <div class="container-fluid py-3">
-    <div>
-      {{ appStore.currentUser.email }}
-    </div>
+
+
+
     <template v-for="project in appStore.projects" :key="project.id">
       <router-link class="block p-4 bg-white border-b text-xl hover:text-orange-600" :to="{name: 'project', params:{ projectId: project.id }}">
         <div class="md:grid grid-cols-3">
