@@ -10,7 +10,7 @@ import TasksList from '@/views/tasks/TasksList.vue'
 const route = useRoute()
 const store = useAppStore()
 const projectId = route.params.projectId
-store.currentProjectId = projectId
+store.projectId = projectId
 </script>
 <template>
   <TaskHeader />

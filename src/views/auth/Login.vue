@@ -1,35 +1,35 @@
 <script setup>
-import { ref } from "vue";
-import { useRouter } from "vue-router";
-import { getAuth, signInWithEmailAndPassword, GoogleAuthProvider, signInWithPopup } from "firebase/auth";
+import { ref } from 'vue'
+import { useAuth } from '@/composables/useAuth'
+import { useAppStore } from '@/stores/app'
+import { useRouter } from 'vue-router'
+const auth = useAuth()
+const store = useAppStore()
 const router = useRouter()
-const auth = getAuth()
-const isLoading = ref(false)
 const email = ref("")
 const password = ref("")
-const errMsg = ref("")
+
 const login = async () => {
-  isLoading.value = true
+  store.isLoading = true
   try {
-    await signInWithEmailAndPassword(auth, email.value, password.value)
+    await auth.login(email.value, password.value)
     router.push("/")
   } catch (error) {
-    console.log('signIn : ' + error)
-    errMsg.value = "ログインできませんでした"
+    store.error = "ログインできませんでした"
   } finally {
-    isLoading.value = false
+    store.isLoading = false
   }
 };
 const loginGoogle = async () => {
-  return false // Googleログイン無効
-  const provider = new GoogleAuthProvider();
-  signInWithPopup(auth, provider).then(() => {
-    router.push("/");
-  }).catch((error) => {
-      isLoading.value = false;
-      console.log(error);
-      errMsg.value = "There was a problem loggin in";
-    });
+  // return false // Googleログイン無効
+  try {
+    await auth.loginGoogle()
+    router.push("/")
+  } catch (e) {
+    store.error = "ログインできませんでした"
+  } finally {
+    store.isLoading = false
+  }
 };
 </script>
 
@@ -45,12 +45,12 @@ const loginGoogle = async () => {
       <input type="password" class="form-control" v-model="password" placeholder="Password" />
     </div>
     <div class="mb-3">
-      <div class="text-sm text-red-700" v-if="errMsg" role="alert">
-        {{ errMsg }}
+      <div class="text-sm text-red-700" v-if="store.error" role="alert">
+        {{ store.error }}
       </div>
     </div>
     <div class="mb-3">
-      <button type="submit" :disabled="isLoading" class="btn btn-primary">Login</button>
+      <button type="submit" :disabled="store.isLoading" class="btn btn-primary">Login</button>
     </div>
   </form>
   </div>

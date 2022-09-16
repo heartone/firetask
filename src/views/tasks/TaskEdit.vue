@@ -15,7 +15,7 @@ const store = useAppStore()
 const route = useRoute()
 const router = useRouter()
 const projectId = route.params.projectId
-store.currentProjectId = projectId
+store.projectId = projectId
 // 現在のタスク
 const taskId = route.params.taskId
 store.currentTaskId = null

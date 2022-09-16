@@ -11,7 +11,7 @@ import Modal from '@/components/Modal.vue'
 const showModal = ref(false)
 const store = useAppStore()
 const projectId = useRoute().params.projectId
-store.currentProjectId = projectId
+store.projectId = projectId
 
 // タスク一覧
 const tasks = ref([])
@@ -33,14 +33,14 @@ const getTasks = async () => {
   try {
     const querySnapshot = await getDocs(
       query(
-        tasksRef, orderBy("priority", "asc")//, orderBy("createdAt", "desc")
+        tasksRef, orderBy("priority", "asc")
       )
     )
     tasks.value = querySnapshot.docs.map(doc => ({
       id: doc.id, ...doc.data()
     }))
-  } catch (error) {
-    console.log(error)
+  } catch (e) {
+    store.error = e.message
   }
 }
 // 変更を監視
@@ -59,8 +59,8 @@ watch(progressCount, (newValue, oldValue) => {
       count: newValue
     });
     store.currentProject.count = progressCount.value
-  } catch (error) {
-    console.log(error)
+  } catch (e) {
+    store.error = e.message
   }
 })
 
@@ -76,8 +76,8 @@ const deleteTask = async () => {
     await deleteDoc(doc(db, "tasks", deleteTaskId.value))
     store.flash = 'タスクを削除しました'
     showModal.value = false
-  } catch (error) {
-    console.log(error)
+  } catch (e) {
+    store.error = e.message
   }
 }
 </script>

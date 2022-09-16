@@ -16,8 +16,8 @@ const router = useRouter()
 const projectId = route.params.projectId
 const editProject = ref({})
 const originProject = ref({})
-if (!store.currentProjectId) {
-  store.currentProjectId = projectId
+if (!store.projectId) {
+  store.projectId = projectId
 }
 store.currentTaskId = null
 
@@ -70,7 +70,7 @@ const saveByShortcutKey = (event) => {
 }
 // プロジェクト編集
 const updateProject = async () => {
-  await updateDoc(doc(db, "projects", projectId), {
+  await updateDoc(doc(db, "users", store.uid, "projects", projectId), {
     name: editProject.value.name || '',
     priority: parseInt(editProject.value.priority) || 0,
     description: editProject.value.description || '',
@@ -93,7 +93,7 @@ const deleteProject = async () => {
      deleteDoc(doc(db, "tasks", task.id))
   })
   // プロジェクトを削除
-  await deleteDoc(doc(db, "projects", projectId))
+  await deleteDoc(doc(db, "users", store.uid, "projects", projectId))
   router.push({name: 'home'})
   store.flash = 'プロジェクトを削除しました'
 

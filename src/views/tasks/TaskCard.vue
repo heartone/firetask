@@ -25,7 +25,7 @@ const updateStatus = (status) => updateTask({status: status})
 const updatePriority = (priority) => updateTask({priority: priority})
 // タスクを更新する
 const updateTask = async (field) => {
-  await updateDoc(doc(db, "tasks", props.task.id), field)
+  await updateDoc(doc(db, "users", store.uid, "projects", store.projectId, "tasks", props.task.id), field)
   store.flash = {status: 'ステータス', priority: '優先度'}[Object.keys(field)[0]] + 'を変更しました'
   store.currentTaskId = props.task.id
 }

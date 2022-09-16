@@ -29,7 +29,7 @@ const progressCount = computed(() => {
         <div class="md:grid grid-cols-3">
           <div class="flex items-center justify-between">
               <div class="flex items-center min-w-0">
-                <i class="fa fa-circle mr-2 text-orange-400" :class="{'text-gray-300': project.id !== store.currentProjectId}"></i>
+                <i class="fa fa-circle mr-2 text-orange-400" :class="{'text-gray-300': project.id !== store.projectId}"></i>
                 <div class="truncate">{{ project.name }}</div>
               </div>
               <div class="whitespace-nowrap text-xs text-gray-500 mr-2">優先度:{{ project.priority }}</div>
