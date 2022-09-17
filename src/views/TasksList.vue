@@ -76,6 +76,7 @@ const deleteTask = async () => {
     await deleteDoc(useTask().docRef( deleteTaskId.value))
     store.flash = 'タスクを削除しました'
     showModal.value = false
+    store.currentTaskId = null
   } catch (e) {
     store.error = e.message
   }

@@ -26,6 +26,7 @@ const deleteTasks = async () => {
   await props.tasks.map(task => {
     useTask().deleteTask(task.id)
   })
+  store.currentTaskId = null
   showModal.value = false
   store.flash = props.tasks.length + ' 件のタスクを削除しました'
 }

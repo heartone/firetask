@@ -7,6 +7,12 @@ import Dropdown from '@/components/Dropdown.vue'
 const store = useAppStore()
 const props = defineProps(['task'])
 
+const statuses = {
+  todo: 'bg-yellow-500',
+  doing: 'bg-red-500',
+  done: 'bg-green-500'
+}
+
 // タスク削除アクションを発行
 const emits = defineEmits(['onDeleteTask'])
 const onDeleteTask = (taskId) => {
@@ -53,8 +59,8 @@ const updateTask = async (fields) => {
       <span v-if="task.description.length > 0"><i class="fa fa-pen-square mr-1"></i>{{ task.description.length}}char</span>
     </div>
     <div class="grid grid-cols-4 gap-0.5 mt-2">
-      <template v-for="(status, index) in ['todo', 'doing', 'done']" :key="index">
-        <button @click="updateStatus(status)" class="p-0.5 w-full text-xs text-white hover:bg-gray-500" :class="{'bg-gray-300': task.status == status, 'bg-gray-400': task.status != status}">{{ status.toUpperCase() }}</button>
+      <template v-for="(color, status) in statuses" :key="status">
+        <button @click="updateStatus(status)" class="p-0.5 w-full text-xs text-white" :class="(task.status == status) ? color : 'bg-gray-400 hover:bg-gray-500'">{{ status.toUpperCase() }}</button>
       </template>
       <button class="p-0.5 w-full text-xs text-white bg-gray-400 hover:bg-gray-500" @click="onDeleteTask(task.id)">DELETE</button>
     </div>
