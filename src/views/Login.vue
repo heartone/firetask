@@ -5,6 +5,7 @@ import { useAppStore } from '@/stores/app'
 import { useRouter } from 'vue-router'
 import Card from '@/components/Card.vue'
 import Phrase from '@/components/Phrase.vue'
+import Fire from '@/components/Fire.vue'
 
 const auth = useAuth()
 const store = useAppStore()
@@ -36,18 +37,29 @@ const loginGoogle = async () => {
 };
 </script>
 
+<style scoped>
+.phrase {
+  text-shadow: 0 0 4px rgba(255, 255, 255, 1);
+}
+</style>
 <template>
   <div class="container-fluid py-4">
 
   <form class="mt-4 md:w-1/2 lg:w-1/3 mx-auto" @submit.prevent="login">
-    <div class="text-2xl text-orange-600 text-center mb-6">
-      <Phrase />
+    <div class="relative">
+
+      <div class="absolute text-2xl z-10 relative text-orange-600 text-center mb-6">
+        <Phrase />
+      </div>
+      <div class="invisible absolute w-full -bottom-3">
+        <Fire />
+      </div>
     </div>
     <Card>
       <template #header><i class="fa fa-fire text-orange-500 text-2xl mr-2"></i>Firetask ログイン</template>
       <template #body>
         <div class="mb-3 py-2 px-3 rounded bg-orange-100 border border-orange-400 text-orange-700">
-          <div class="font-bold mb-2">デモ実施中</div>
+          <div class="font-bold mb-2 flex justify-between items-center">デモ実施中<button type="button" class="font-normal text-xs text-indigo-500 hover:text-indigo-400" @click="email='yamada@example.com';password='himitudayo'">クリックで自動入力</button></div>
           <dl class="flex flex-wrap text-sm">
             <dt class="w-1/4">E-mail: </dt>
             <dd class="w-3/4 mb-1">yamada@example.com</dd>
@@ -70,8 +82,7 @@ const loginGoogle = async () => {
         </div>
       </template>
     </Card>
-
-
   </form>
+
   </div>
 </template>
