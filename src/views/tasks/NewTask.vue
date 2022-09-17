@@ -16,7 +16,7 @@ const newTask = reactive({
 // タスクを追加する
 const addTask = async () => {
   try {
-    await useTask().addTask({
+    store.currentTaskId = await useTask().addTask({
       ...newTask,
       createdAt: new Date()
     })

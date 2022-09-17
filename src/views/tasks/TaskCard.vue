@@ -29,10 +29,12 @@ const updateTask = async (fields) => {
   store.flash = {status: 'ステータス', priority: '優先度'}[Object.keys(fields)[0]] + 'を変更しました'
   store.currentTaskId = props.task.id
 }
+
+
 </script>
 
 <template>
-  <div class="p-2 mb-3 bg-white shadow-lg rounded" :class="{'bg-yellow-100': store.currentTaskId == task.id}">
+  <div :id="'task-' + task.id" class="p-2 mb-3 bg-white shadow-lg rounded" :class="{'bg-yellow-100': store.currentTaskId == task.id}">
     <div class="flex">
       <Dropdown align="left" width="24">
         <template #trigger>

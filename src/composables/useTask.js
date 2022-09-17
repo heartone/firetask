@@ -17,7 +17,8 @@ export const useTask = () => {
     return await getDoc(docRef(taskId))
   }
   const addTask = async (fields) => {
-    await addDoc(collectionRef(), fields)
+    const result = await addDoc(collectionRef(), fields)
+    return result.id
   }
 
   const updateTask = async (taskId, fields) => {

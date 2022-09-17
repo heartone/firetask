@@ -29,6 +29,8 @@ onSnapshot(tasksRef, async () => {
     id: doc.id, ...doc.data()
   }))
   store.isLoading = false
+  console.log(store.currentTaskId)
+  smoothScroll()
 })
 
 
@@ -78,6 +80,26 @@ const deleteTask = async () => {
     store.error = e.message
   }
 }
+
+// test スクロール追随
+const smoothScroll = () => {
+  setTimeout(() => {
+    const target = document.querySelector("#task-" + store.currentTaskId)
+    if (!target) return
+    const container = document.querySelector('#tasksContainer')
+    const rect = target.getBoundingClientRect()
+    const offsetTop = 79
+    const offsetLeft = 28
+    container.scrollTo({
+      left: rect.left + container.scrollLeft - offsetLeft,
+      behavior: 'smooth'
+    })
+    window.scrollTo({
+      top: rect.top - offsetTop,
+      behavior: 'smooth'
+    })
+  }, 200)
+}
 </script>
 <style scoped>
 .tasksCols {
@@ -86,7 +108,7 @@ const deleteTask = async () => {
 </style>
 <template>
   <TaskHeader :progressCount="progressCount"  />
-  <div class="container-fluid py-3 overflow-x-auto">
+  <div id="tasksContainer" class="container-fluid py-3 overflow-x-auto">
     <div class="tasksCols grid grid-cols-3 gap-4">
       <template v-for="status in ['todo', 'doing', 'done']" :key="status">
         <TasksCol @onDeleteTask="onDeleteTask" :status="status" :tasks="tasks.filter(task => task.status == status)" />

@@ -8,7 +8,6 @@ import { RouterLink, RouterView } from 'vue-router'
 import TopHeader from '@/components/TopHeader.vue'
 import Logout from '@/components/Logout.vue'
 import Flash from '@/components/Flash.vue'
-import LoadingIcon from '@/components/LoadingIcon.vue'
 import Modal from '@/components/Modal.vue'
 const auth = getAuth()
 const store = useAppStore()
@@ -48,9 +47,6 @@ const resetErrorMessage = () => {
     <TopHeader />
     <main class="flex-grow">
       <RouterView />
-      <div class="flex justify-center py-5" v-if="store.isLoading">
-        <LoadingIcon />
-      </div>
     </main>
     <footer class="py-5 flex justify-center items-center text-xs text-gray-500">
       <div class="mr-3">&copy; 有限会社ハートワン</div>
