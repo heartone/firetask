@@ -9,7 +9,7 @@
 [https://firetask-8101.web.app/](https://firetask-8101.web.app/)
 
 ### QRコード
-![qr](https://chart.googleapis.com/chart?cht=qr&chs=300x300&chl=https://firetask-8101.web.app/?authuser=0&choe=UTF-8)
+![qr](https://chart.googleapis.com/chart?cht=qr&chs=120x120&chl=https://firetask-8101.web.app/?authuser=0&choe=UTF-8)
 
 ### スクリーンショット：Screenshot
 #### デスクトップ版
@@ -17,7 +17,7 @@
 #### スマホ版
 ![firetask-gif](https://res.cloudinary.com/heart1jp/image/upload/v1663400244/Newmonz/Firebase/firetask-introduction.gif)
 
-![like-fire](https://res.cloudinary.com/heart1jp/image/upload/v1663401618/Newmonz/Firebase/like-fire.png)
+![like-fire](https://res.cloudinary.com/heart1jp/image/upload/c_lfill,w_320/v1663401618/Newmonz/Firebase/like-fire.png)
 
 <style>img {max-height:300px;}</style>
 ## 技術アセット：Tech Assets
