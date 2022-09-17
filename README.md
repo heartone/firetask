@@ -1,29 +1,35 @@
-# task-app
+# 『Firetask』 〜 進捗すること火の如し
+- Firebase上で高速に動作するタスク管理アプリです
+- Todo, Doing, Doneの３つのステータスで進捗を管理する、いわゆるタスクボード方式です
+- プロジェクトごとにタスクを管理することができます
+- 現在はテスト版のため新規ユーザー登録はできませんが、デモ用のアカウントでお試し頂けます。
 
-This template should help get you started developing with Vue 3 in Vite.
+### デモ公開中
+### URL
+[https://firetask-8101.web.app/](https://firetask-8101.web.app/)
 
-## Recommended IDE Setup
+### QRコード
+![qr](https://chart.googleapis.com/chart?cht=qr&chs=300x300&chl=https://firetask-8101.web.app/?authuser=0&choe=UTF-8)
 
-[VSCode](https://code.visualstudio.com/) + [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (and disable Vetur) + [TypeScript Vue Plugin (Volar)](https://marketplace.visualstudio.com/items?itemName=Vue.vscode-typescript-vue-plugin).
+### スクリーンショット：Screenshot
+#### デスクトップ版
+![firetask](https://res.cloudinary.com/heart1jp/image/upload/v1663393204/Newmonz/Firebase/taskboard.png)
+#### スマホ版
+![firetask-gif](https://res.cloudinary.com/heart1jp/image/upload/v1663400244/Newmonz/Firebase/firetask-introduction.gif)
 
-## Customize configuration
+![like-fire](https://res.cloudinary.com/heart1jp/image/upload/v1663401618/Newmonz/Firebase/like-fire.png)
 
-See [Vite Configuration Reference](https://vitejs.dev/config/).
-
-## Project Setup
-
-```sh
-npm install
-```
-
-### Compile and Hot-Reload for Development
-
-```sh
-npm run dev
-```
-
-### Compile and Minify for Production
-
-```sh
-npm run build
-```
+<style>img {max-height:300px;}</style>
+## 技術アセット：Tech Assets
+### Firebase 
+- Web SDK ver.9
+- Authenticate
+- Cloud Firestore
+- Hosting
+### Vue3
+- Vite for build tool
+- Pinia for state management
+- Composition API
+### Packages
+- Tailwindcss
+- vue3-markdown-it

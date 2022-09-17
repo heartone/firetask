@@ -29,7 +29,7 @@
                   <button class="w-8 h-8 leading-1 border rounded text-sm text-gray-600 hover:bg-gray-200" @click="emits('close')"><i class="fa fa-fw fa-times"></i></button>
                 </div>
               </div>
-              <div class="py-4">
+              <div class="pt-4 my-2">
                 <slot name="content"></slot>
               </div>
             </div>

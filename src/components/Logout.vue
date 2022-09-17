@@ -1,5 +1,4 @@
 <script setup>
-import { ref } from 'vue'
 import { useAuth } from '@/composables/useAuth'
 import { useAppStore } from '@/stores/app'
 import { useRouter } from 'vue-router'
@@ -11,6 +10,8 @@ const logout = async () => {
   store.isLoading = true
   try {
     await auth.logout(auth)
+    store.projectId = null
+    store.flash = 'ログアウトしました'
     router.push("/login")
   } catch(e) {
     store.error = e.message

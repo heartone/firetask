@@ -1,17 +1,14 @@
 <script setup>
-import { ref, computed, watch } from "vue"
+import { ref, computed, watch } from 'vue'
 import { useRoute } from 'vue-router'
-import { useAuth } from '@/composables/useAuth'
 import { useProject } from '@/composables/useProject'
 import { useTask } from '@/composables/useTask'
 import { useAppStore } from '@/stores/app'
-import { onSnapshot, collection, getDocs, query, where, orderBy, updateDoc, deleteDoc, doc } from "firebase/firestore"
-
+import { onSnapshot, getDocs, query, orderBy, updateDoc, deleteDoc } from 'firebase/firestore'
 import TaskHeader from '@/views/tasks/TaskHeader.vue'
 import TasksCol from '@/views/tasks/TasksCol.vue'
 import Modal from '@/components/Modal.vue'
 
-const auth = useAuth()
 const showModal = ref(false)
 const store = useAppStore()
 store.projectId = useRoute().params.projectId
@@ -29,11 +26,8 @@ onSnapshot(tasksRef, async () => {
     id: doc.id, ...doc.data()
   }))
   store.isLoading = false
-  console.log(store.currentTaskId)
   smoothScroll()
 })
-
-
 
 // ステータス集計
 const progressCount = computed(() => {
@@ -45,9 +39,9 @@ const progressCount = computed(() => {
   return count
 })
 
-
-// ステータス再集計
+// オブジェクトをJSONにしてソート（内容比較用）
 const sortedJson = (obj) => JSON.stringify(Object.entries(obj || {}).sort())
+// ステータス再集計
 watch(progressCount, (newValue, oldValue) => {
   // 変更がなければ更新しない
   if (sortedJson(store.currentProject.count) == sortedJson(progressCount.value)) {
@@ -59,7 +53,7 @@ watch(progressCount, (newValue, oldValue) => {
       count: newValue
     });
     store.currentProject.count = progressCount.value
-  } catch (error) {
+  } catch (e) {
     store.error = e.message
   }
 })

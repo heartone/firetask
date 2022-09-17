@@ -3,6 +3,9 @@ import { ref } from 'vue'
 import { useAuth } from '@/composables/useAuth'
 import { useAppStore } from '@/stores/app'
 import { useRouter } from 'vue-router'
+import Card from '@/components/Card.vue'
+import Phrase from '@/components/Phrase.vue'
+
 const auth = useAuth()
 const store = useAppStore()
 const router = useRouter()
@@ -36,22 +39,39 @@ const loginGoogle = async () => {
 <template>
   <div class="container-fluid py-4">
 
-  <form @submit.prevent="login">
+  <form class="mt-4 md:w-1/2 lg:w-1/3 mx-auto" @submit.prevent="login">
+    <div class="text-2xl text-orange-600 text-center mb-6">
+      <Phrase />
+    </div>
+    <Card>
+      <template #header><i class="fa fa-fire text-orange-500 text-2xl mr-2"></i>Firetask ログイン</template>
+      <template #body>
+        <div class="mb-3 py-2 px-3 rounded bg-orange-100 border border-orange-400 text-orange-700">
+          <div class="font-bold mb-2">デモ実施中</div>
+          <dl class="flex flex-wrap text-sm">
+            <dt class="w-1/4">E-mail: </dt>
+            <dd class="w-3/4 mb-1">yamada@example.com</dd>
+            <dt class="w-1/4">Password: </dt>
+            <dd class="w-3/4">himitudayo</dd>
+          </dl>
+        </div>
+        <div class="flex items-center mb-3">
+          <i class="fa fa-envelope fa-fw text-indigo-400 text-lg mr-2"></i>
+          <input type="email" class="flex-grow form-control" v-model="email" placeholder="Email" />
+        </div>
+        <div class="flex items-center mb-3">
+          <i class="fa fa-lock fa-fw text-indigo-400 text-lg mr-2"></i>
+          <input type="password" class="flex-grow form-control" v-model="password" placeholder="Password" />
+        </div>
+      </template>
+      <template #footer>
+        <div class="text-center">
+          <button type="submit" :disabled="store.isLoading" class="btn btn-success">Login</button>
+        </div>
+      </template>
+    </Card>
 
-    <div class="mb-3">
-      <input type="email" class="form-control" v-model="email" placeholder="Email" />
-    </div>
-    <div class="mb-3">
-      <input type="password" class="form-control" v-model="password" placeholder="Password" />
-    </div>
-    <div class="mb-3">
-      <div class="text-sm text-red-700" v-if="store.error" role="alert">
-        {{ store.error }}
-      </div>
-    </div>
-    <div class="mb-3">
-      <button type="submit" :disabled="store.isLoading" class="btn btn-primary">Login</button>
-    </div>
+
   </form>
   </div>
 </template>

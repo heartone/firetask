@@ -13,6 +13,7 @@ const login = async () => {
   store.isLoading = true
   try {
     await auth.login(email.value, password.value)
+    store.flash = "ログインしました"
     router.push("/")
   } catch (error) {
     store.error = "ログインできませんでした"

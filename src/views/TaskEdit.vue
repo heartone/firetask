@@ -83,8 +83,9 @@ const updateTask = async () => {
     getTask()
     store.currentTaskId = taskId
     store.flash = '保存しました'
-  } catch (error) {
-    console.log(error)
+  } catch (e) {
+    console.log(e)
+    store.error = e.message
   }
 }
 
