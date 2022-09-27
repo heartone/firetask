@@ -89,10 +89,10 @@ const smoothScroll = () => {
       left: rect.left + container.scrollLeft - offsetLeft,
       behavior: 'smooth'
     })
-    window.scrollTo({
-      top: rect.top - offsetTop,
-      behavior: 'smooth'
-    })
+    // window.scrollTo({
+    //   top: rect.top - offsetTop,
+    //   behavior: 'smooth'
+    // })
   }, 200)
 }
 </script>

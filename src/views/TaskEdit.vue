@@ -75,7 +75,7 @@ const saveByShortcutKey = (event) => {
 const updateTask = async () => {
   try {
     await useTask().updateTask(taskId, {
-      content: editTask.value.content,
+      content: editTask.value?.content,
       description: editTask.value.description,
       status: editTask.value.status,
       priority: editTask.value.priority,
@@ -145,7 +145,7 @@ const changeProject = async () => {
         </dl>
       </div>
       <div class="md:col-span-7 bg-white rounded-lg p-3">
-        <h1 class="text-2xl mb-4 pb-4 py-1 border-b">{{ editTask.content }}</h1>
+        <h1 class="text-2xl mb-4 pb-4 py-1 border-b">{{ editTask?.content }}</h1>
         <Markdown ref="markdown" class="markdown-body" :source="editTask.description" />
       </div>
     </div>

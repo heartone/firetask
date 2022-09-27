@@ -9,7 +9,7 @@ const store = useAppStore()
 }
 </style>
 <template>
-  <header class="bg-gray-800 text-gray-200">
+  <header class="sticky top-0 z-10 bg-gray-800 text-gray-200">
     <div class="container-fluid flex justify-between items-center">
       <div class="flex items-center overflow-hidden h-12">
         <router-link class="mr-3" to="/">
