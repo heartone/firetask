@@ -48,8 +48,8 @@ const loginGoogle = async () => {
   <form class="mt-4 md:w-1/2 lg:w-1/3 mx-auto" @submit.prevent="login">
     <div class="relative">
 
-      <div class="absolute text-2xl z-10 relative text-orange-600 text-center mb-6">
-        <Phrase />
+      <div class="text-2xl text-orange-600 text-center mb-6">
+        <Phrase phrase="進捗すること火の如し" />
       </div>
       <div class="invisible absolute w-full -bottom-3">
         <Fire />

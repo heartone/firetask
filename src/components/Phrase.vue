@@ -1,3 +1,11 @@
+<script setup>
+defineProps({
+  phrase: {
+    type: String,
+    default: ''
+  }
+})
+</script>
 <style scoped>
 @import url('https://fonts.googleapis.com/css2?family=Reggae+One&display=swap');
 .phrase {
@@ -5,5 +13,5 @@
 }
 </style>
 <template>
-  <div class="phrase">進捗すること火の如し</div>
+  <div class="phrase">{{ phrase }}</div>
 </template>

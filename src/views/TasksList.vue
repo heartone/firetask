@@ -8,6 +8,7 @@ import { onSnapshot, getDocs, query, orderBy, updateDoc, deleteDoc } from 'fireb
 import TaskHeader from '@/views/tasks/TaskHeader.vue'
 import TasksCol from '@/views/tasks/TasksCol.vue'
 import Modal from '@/components/Modal.vue'
+import Phrase from '@/components/Phrase.vue'
 
 const showModal = ref(false)
 const store = useAppStore()
@@ -109,6 +110,12 @@ const smoothScroll = () => {
         <TasksCol @onDeleteTask="onDeleteTask" :status="status" :tasks="tasks.filter(task => task.status == status)" />
       </template>
     </div>
+  </div>
+  <div>
+    <div class="my-6 text-2xl text-orange-600 text-center">
+      <Phrase phrase="積み上がること山の如し" />
+    </div>
+
   </div>
   <Modal :show="showModal" @close="showModal=false">
     <template #title>削除確認</template>

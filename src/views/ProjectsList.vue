@@ -5,6 +5,7 @@ import PageHeader from '@/components/PageHeader.vue'
 import NewProject from '@/views/projects/NewProject.vue'
 import ProjectProgress from '@/views/projects/ProjectProgress.vue'
 import LoadingIcon from '@/components/LoadingIcon.vue'
+import Phrase from '@/components/Phrase.vue'
 
 const store = useAppStore()
 // タスク解除
@@ -49,6 +50,9 @@ const progressCount = computed(() => {
 
     <div class="flex justify-center py-5" v-if="store.isLoading">
       <LoadingIcon />
+    </div>
+    <div class="my-6 text-2xl text-orange-600 text-center">
+      <Phrase phrase="進捗すること火の如し" />
     </div>
   </div>
 </template>
