@@ -8,19 +8,12 @@
 ### URL
 [https://firetask-8101.web.app/](https://firetask-8101.web.app/)
 
-### QRコード
-![qr](https://chart.googleapis.com/chart?cht=qr&chs=120x120&chl=https://firetask-8101.web.app/?authuser=0&choe=UTF-8)
-
 ### スクリーンショット：Screenshot
-#### デスクトップ版
-![firetask](https://res.cloudinary.com/heart1jp/image/upload/v1663393204/Newmonz/Firebase/taskboard.png)
-#### スマホ版
+![firetask](https://newmonz.jp/storage/images/1/d95db4ab-f02a-459b-ab71-cdd893ee2a99.png)
 ![firetask-gif](https://res.cloudinary.com/heart1jp/image/upload/v1663400244/Newmonz/Firebase/firetask-introduction.gif)
 
-![like-fire](https://res.cloudinary.com/heart1jp/image/upload/c_lfill,w_320/v1663401618/Newmonz/Firebase/like-fire.png)
-
 <style>img {max-height:300px;}</style>
-## 技術アセット：Tech Assets
+## 技術スタック：Tech stack
 ### Firebase 
 - Web SDK ver.9
 - Authenticate
